@@ -23,6 +23,9 @@ from django.conf import settings
 urlpatterns = (
     [
         path(settings.ADMIN_URL, admin.site.urls, name="admin"),
+        path("", include("landing_page.urls", namespace="landing-page")),
+        path("accounts/", include("accounts.urls", namespace="accounts")),
     ]
     + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
-    + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT))
+    + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+)
