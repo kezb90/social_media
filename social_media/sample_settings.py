@@ -5,3 +5,7 @@ SECRET_KEY = ""
 DEBUG = False
 
 ALLOWED_HOSTS = []
+
+ADMIN_URL = ""
+
+CORS_ALLOW_ALL_ORIGINS: True
