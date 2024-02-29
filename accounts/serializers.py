@@ -6,7 +6,7 @@ from django.contrib.auth.models import User
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['id', 'username', 'first_name', 'last_name', 'email']
+        fields = ['username', 'first_name', 'last_name', 'email']
 
 
 class ProfileSerializer(serializers.ModelSerializer):
@@ -15,7 +15,7 @@ class ProfileSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Profile
-        fields = ('user', 'bio', 'birthday', )
+        fields = ('id', 'user', 'bio', 'birthday', 'age')
 
     def get_age(self, obj):
-        return obj.age()
+        return obj.age
