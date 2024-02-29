@@ -18,4 +18,4 @@ class ProfileSerializer(serializers.ModelSerializer):
         fields = ('user', 'bio', 'birthday', )
 
     def get_age(self, obj):
-        return obj.calculate_age()
+        return obj.age()
