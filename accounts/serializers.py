@@ -4,6 +4,33 @@ from django.contrib.auth.models import User
 import re
 
 
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ["id", "username", "first_name", "last_name", "email"]
+        read_only_fields = ("username",)
+
+
+class ProfileSerializer(serializers.ModelSerializer):
+    age = serializers.ReadOnlyField()
+    user = UserSerializer(many=False)
+
+    class Meta:
+        model = Profile
+        fields = (
+            "id",
+            "user",
+            "bio",
+            "birthday",
+            "is_public",
+            "is_active",
+            "created_at",
+            "updated_at",
+            "age",
+        )
+        read_only_fields = ("user", "created_at", "updated_at", "age")
+
+
 class SignupUserSerializer(serializers.Serializer):
     username = serializers.CharField(max_length=30)
     password = serializers.CharField(max_length=50)
