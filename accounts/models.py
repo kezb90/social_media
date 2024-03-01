@@ -19,8 +19,9 @@ class MyBaseModel(models.Model):
 
 
 class Profile(MyBaseModel):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="profile")
     bio = models.TextField(blank=True)
+    is_public = models.BooleanField(default=False)
     birthday = models.DateField(null=True, blank=True)
     profile_picture = models.ImageField(
         upload_to="profile_pics/", blank=True, null=True
