@@ -1,6 +1,7 @@
 from django.contrib import admin
 from django.contrib.admin import register
 from .models import Profile
+
 # Register your models here.
 
 
@@ -12,7 +13,7 @@ class ProfileAdmin(admin.ModelAdmin):
         "age",
         "birthday",
         "created_at",
-        'bio',
+        "bio",
     )
     list_display_links = ("id", "user")
-    search_fields = ("user__fisrt_name", "user__last_name", 'id')
+    search_fields = ("user__fisrt_name", "user__last_name", "id")

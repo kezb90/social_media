@@ -15,3 +15,12 @@ class IsOwnerOrReadOnly(permissions.BasePermission):
 
         # Write permissions are only allowed to the owner of the profile.
         return obj.user == request.user
+
+
+class IsUnauthenticated(permissions.BasePermission):
+    """
+    Allows access only to Unauthenticated users.
+    """
+
+    def has_permission(self, request, view):
+        return not request.user or not request.user.is_authenticated

@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
+from datetime import timedelta
 from pathlib import Path
 import os
 from .local_settings import *
@@ -32,11 +33,14 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     # TRUSTAPPS
-    'rest_framework',
+    "rest_framework",
     "corsheaders",
+    "rest_framework_simplejwt",
     # MYAPPS
     "accounts.apps.AccountsConfig",
     "landing_page.apps.LandingPageConfig",
+    # THIRD PART APPS
+    "drf_spectacular",
 ]
 
 MIDDLEWARE = [
@@ -143,4 +147,20 @@ REST_FRAMEWORK = {
         "rest_framework.permissions.IsAuthenticated",
         # Add other permission classes as needed
     ),
+    # "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
+    # "PAGE_SIZE": 10,
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
+}
+
+SIMPLE_JWT = {
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=5),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
+}
+
+SPECTACULAR_SETTINGS = {
+    "TITLE": "Your Project API",
+    "DESCRIPTION": "Your project description",
+    "VERSION": "1.0.0",
+    "SERVE_INCLUDE_SCHEMA": False,
+    # OTHER SETTINGS
 }
