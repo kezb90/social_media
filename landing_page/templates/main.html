@@ -19,9 +19,9 @@ landing page
         <li class="list-group-item list-group-item-success"><a class="nav-link" href="{% url 'accounts:logout' %}">Logout</a></li>
         <li class="list-group-item list-group-item-danger"><a class="nav-link" href="/administrator">Admin</a></li>
         <li class="list-group-item list-group-item-warning"><a class="nav-link" href="/api/schema/swagger-ui/">swagger-ui</a></li>
-        <li class="list-group-item list-group-item-info"><a class="nav-link" href="{% url 'accounts:profile-update' %}">profile-deactivate</a></li>
-        <li class="list-group-item list-group-item-light">A simple light list group item</li>
-        <li class="list-group-item">A simple default list group item</li>
+        <li class="list-group-item list-group-item-info"><a class="nav-link" href="{% url 'accounts:profile-update' %}">profile-update</a></li>
+        <li class="list-group-item list-group-item-light"><a class="nav-link" href="{% url 'accounts:follow-list' request.user.username %}">follow list</a></li>
+        <li class="list-group-item"><a class="nav-link" href="{% url 'accounts:follow' '@mohsen' %}">follow {{request.user.username}}</a></li>
         <li class="list-group-item list-group-item-dark">A simple dark list group item</li>
     </ul>
 </div>

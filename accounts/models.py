@@ -20,6 +20,8 @@ class MyBaseModel(models.Model):
 
 class Profile(MyBaseModel):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="profile")
+    follower = models.ManyToManyField(User, blank=True, related_name="followers")
+    following = models.ManyToManyField(User, blank=True, related_name="followings")
     bio = models.TextField(blank=True)
     is_public = models.BooleanField(default=False)
     birthday = models.DateField(null=True, blank=True)
@@ -39,5 +41,19 @@ class Profile(MyBaseModel):
             return age
         return None
 
+    def get_followers(self):
+        followers = self.follower.all()
+        return followers
+
+    def get_followings(self):
+        followings = self.following.all()
+        return followings
+
     def __str__(self):
         return self.user.username
+
+
+# class Follow(models.Model):
+#     user = models.ForeignKey(User, on_delete=models.CASCADE)
+#     follower = models.ManyToManyField(User,  related_name='followers')
+#     following = models.ManyToManyField(User,  related_name='followings')

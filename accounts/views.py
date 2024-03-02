@@ -26,6 +26,83 @@ from django.shortcuts import get_object_or_404
 # Create your views here.
 
 
+@api_view(["GET"])
+@permission_classes([IsAuthenticated])
+def follow(request: Request, username: str):
+    try:
+        user = User.objects.get(username=username)
+    except User.DoesNotExist:
+        return Response(
+            {"message": "This username does not exist"}, status.HTTP_404_NOT_FOUND
+        )
+    if request.user == user:
+        return Response(
+            {"message": "You are not allowed to follow yourself."},
+            status.HTTP_403_FORBIDDEN,
+        )
+    if request.method == "GET":
+        profile = Profile.objects.get(user=user)
+        if profile.is_public:
+            followers = profile.get_followers()
+            is_following = request.user in followers
+            if is_following:
+                profile.follower.remove(request.user)
+                return Response(
+                    {"message": f"You are no longer follower of user {user.username}."},
+                    status.HTTP_200_OK,
+                )
+            else:
+                profile.follower.add(request.user)
+                return Response(
+                    {"message": f"Now you are following user {user.username}."},
+                    status.HTTP_200_OK,
+                )
+        else:
+            # raise NotImplementedError(
+            #     "implement section (follow username which are private)"
+            # )
+            return Response(
+                {
+                    "message": f"This profile is private and request will be proccessed after accepting by user {user.username}."
+                },
+                status.HTTP_208_ALREADY_REPORTED,
+            )
+
+
+@api_view(["GET"])
+@permission_classes([IsAuthenticated])
+def followListView(request: Request, username):
+    try:
+        user = User.objects.get(username=username)
+    except User.DoesNotExist:
+        return Response(
+            {"message": "This username does not exist"}, status.HTTP_404_NOT_FOUND
+        )
+    profile = Profile.objects.get(user=user)
+    if request.method == "GET":
+        followers = profile.get_followers()
+        # Check if requset.user is following demanded profile
+        is_following = request.user in followers
+        followings = profile.get_followings()
+        follower_serializer = UserSerializer(followers, many=True)
+        following_serializer = UserSerializer(followings, many=True)
+        if profile.is_public or request.user == user or is_following:
+            return Response(
+                {
+                    "follower(s)": follower_serializer.data,
+                    "following": following_serializer.data,
+                },
+                status.HTTP_200_OK,
+            )
+        else:
+            return Response(
+                {
+                    "message": "This profile in private and you are not following him/her"
+                },
+                status.HTTP_403_FORBIDDEN,
+            )
+
+
 @api_view(["GET", "PUT"])
 @permission_classes([IsAuthenticated])
 def profileUpdateView(request: Request):
@@ -99,9 +176,13 @@ def logout_view(request):
     return Response({"message": "Logout successful."}, status.HTTP_202_ACCEPTED)
 
 
-@api_view(["POST"])
+@api_view(["POST", "GET"])
 @permission_classes([IsUnauthenticated])
 def registerUser(request: Request):
+    if request.method == "GET":
+        return Response(
+            {"username": "@", "password": "", "password_2": ""}, status.HTTP_200_OK
+        )
     if request.method == "POST":
         serializer = SignupUserSerializer(data=request.data)
 
