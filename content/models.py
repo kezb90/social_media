@@ -6,21 +6,45 @@ from accounts.models import MyBaseModel
 
 
 class Post(MyBaseModel):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    owner = models.ForeignKey(User, on_delete=models.CASCADE)
     title = models.CharField(max_length=200)
     caption = models.TextField()
     is_story = models.BooleanField(default=False)
 
     @property
+    def mentioned_users(self):
+        return Mention.objects.filter(post=self, is_active=True).values_list('user__username', flat=True)
+    
+    @property
+    def total_view_count(self):
+        return Viewer.objects.filter(post=self).aggregate(models.Sum('count'))['count__sum'] or 0
+    
+    @property
     def likes_count(self):
         return Like.objects.filter(post=self).count()
 
+    # Count number of persons who viewed this post
     @property
     def views_count(self):
         return Viewer.objects.filter(post=self).count()
 
+    # Add user to mentioned list of a specific post
+    def add_user_to_mention_list(self, user):
+        """
+        Add a user to the mentioned users of the post.
+
+        Args:
+            user (User): The user to be added.
+
+        Raises:
+            ValueError: If the user is already mentioned in the post.
+        """
+        if Mention.objects.filter(post=self, user=user).exists():
+            raise ValueError("User is already mentioned in this post.")
+        Mention.objects.create(post=self, user=user, is_active=True)
+    
     def __str__(self):
-        return f"{self.title} by {self.user.username}"
+        return f"{self.title} by {self.owner.username}"
 
 
 class Like(MyBaseModel):

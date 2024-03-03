@@ -22,8 +22,8 @@ class PostDetailView(APIView):
             return Response(
                 {"message": "This Post does not exist."}, status.HTTP_404_NOT_FOUND
             )
-        profile = Profile.objects.get(user=post.user)
-        post_serializer = PostSerializer(post, many=False)
+        profile = Profile.objects.get(user=post.owner)
+        post_serializer = PostSerializer(post, context={'request': request}, many=False)
         if request.user in profile.get_followers() or request.user == profile.user:
             viewer = Viewer(user=request.user, post=post, is_active=True, count=1)
             try:
@@ -34,11 +34,13 @@ class PostDetailView(APIView):
                     post_id=post_id,
                     defaults={"count": F("count") + 1},
                 )
+            user_requested_has_liked = Like.objects.filter(user=request.user, post= post).exists()
+            print(user_requested_has_liked)
             return Response(post_serializer.data, status.HTTP_200_OK)
         else:
             return Response(
                 {
-                    "message": f"You should follow the user {post.user} to see his/her posts."
+                    "message": f"You should follow the user {post.owner} to see his/her posts."
                 },
                 status.HTTP_403_FORBIDDEN,
             )
@@ -48,11 +50,10 @@ class PostListView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request: Request):
-        user = request.user
-        profile = Profile.objects.get(user=user)
+        profile = Profile.objects.get(user=request.user)
         followings = profile.get_followings()
         queryset = Post.objects.filter(
-            is_story=False, is_active=True, user__in=followings
+            is_story=False, is_active=True, owner__in=followings
         )
-        post_serializer = PostSerializer(queryset, many=True)
+        post_serializer = PostSerializer(queryset, context={'request': request}, many=True)
         return Response(post_serializer.data, status.HTTP_200_OK)

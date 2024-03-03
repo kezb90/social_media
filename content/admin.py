@@ -43,7 +43,8 @@ class PostAdmin(admin.ModelAdmin):
     list_display = (
         "id",
         "title",
-        "user",
+        "owner",
+        "display_total_view_count",
         "display_likes",
         "display_views",
         "caption",
@@ -52,7 +53,11 @@ class PostAdmin(admin.ModelAdmin):
         "updated_at",
         "is_active",
     )
-
+    def display_total_view_count(self, obj):
+        return obj.total_view_count
+    
+    display_total_view_count.short_description = "total_views"
+    
     def display_likes(self, obj):
         return obj.likes_count
 
@@ -61,7 +66,7 @@ class PostAdmin(admin.ModelAdmin):
     def display_views(self, obj):
         return obj.views_count
 
-    display_views.short_description = "Views"
+    display_views.short_description = "Person Views"
 
     list_display_links = ("id", "title")
     search_fields = ("title", "caption", "id")
