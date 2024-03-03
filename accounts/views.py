@@ -3,7 +3,6 @@ from rest_framework import status
 from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny, IsAuthenticated
-from rest_framework.authentication import TokenAuthentication
 from rest_framework.decorators import (
     api_view,
     permission_classes,
@@ -19,8 +18,6 @@ from .serializers import (
 from .permissions import IsUnauthenticated
 from django.contrib.auth.models import User
 from .models import Profile
-from rest_framework import generics
-from django.shortcuts import get_object_or_404
 
 
 # Create your views here.
