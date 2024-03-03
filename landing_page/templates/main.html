@@ -29,7 +29,7 @@ landing page
     </div>
     <ul class="list-group">
         <li class="list-group-item list-group-item-primary"><a class="nav-link" href="{% url 'content:post-list' %}">list of post</a></li>
-        <li class="list-group-item list-group-item-secondary"><a class="nav-link" href="{% url 'accounts:login' %}"></a></li>
+        <li class="list-group-item list-group-item-secondary"><a class="nav-link" href="{% url 'content:post-detail' 1 %}">post detail</a></li>
         <li class="list-group-item list-group-item-success"><a class="nav-link" href="{% url 'accounts:logout' %}"></a></li>
         <li class="list-group-item list-group-item-danger"><a class="nav-link" href="/administrator"></a></li>
         <li class="list-group-item list-group-item-warning"><a class="nav-link" href="/api/schema/swagger-ui/"></a></li>
