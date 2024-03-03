@@ -4,18 +4,22 @@ from .models import Post, Image, Video, Audio, Like, Mention, Viewer
 
 # Register your models here.
 
-class ViewerInline(admin.StackedInline):
+
+class ViewerInline(admin.TabularInline):
     model = Viewer
     extra = 1
 
-class MentionInline(admin.StackedInline):
+
+class MentionInline(admin.TabularInline):
     model = Mention
     extra = 1
 
-class LikeInline(admin.StackedInline):
+
+class LikeInline(admin.TabularInline):
     model = Like
     extra = 1
-        
+
+
 class ImageInline(admin.StackedInline):
     model = Image
     extra = 1
@@ -31,18 +35,45 @@ class AudioInline(admin.StackedInline):
     extra = 1
 
 
-@register(Post)
+class LikeAdmin(admin.ModelAdmin):
+    list_display = ("user", "post")
+
+
 class PostAdmin(admin.ModelAdmin):
     list_display = (
         "id",
         "title",
         "user",
+        "display_likes",
+        "display_views",
         "caption",
         "is_story",
         "created_at",
         "updated_at",
         "is_active",
     )
+
+    def display_likes(self, obj):
+        return obj.likes_count
+
+    display_likes.short_description = "Likes"
+
+    def display_views(self, obj):
+        return obj.views_count
+
+    display_views.short_description = "Views"
+
     list_display_links = ("id", "title")
     search_fields = ("title", "caption", "id")
-    inlines = [ImageInline, VideoInline, AudioInline, LikeInline, MentionInline,ViewerInline]
+    inlines = [
+        ImageInline,
+        VideoInline,
+        AudioInline,
+        LikeInline,
+        MentionInline,
+        ViewerInline,
+    ]
+
+
+admin.site.register(Post, PostAdmin)
+admin.site.register(Like)

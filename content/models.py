@@ -11,9 +11,18 @@ class Post(MyBaseModel):
     caption = models.TextField()
     is_story = models.BooleanField(default=False)
 
+    @property
+    def likes_count(self):
+        return Like.objects.filter(post=self).count()
+
+    @property
+    def views_count(self):
+        return Viewer.objects.filter(post=self).count()
+
     def __str__(self):
         return f"{self.title} by {self.user.username}"
-    
+
+
 class Like(MyBaseModel):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     post = models.ForeignKey(Post, on_delete=models.CASCADE)
@@ -25,7 +34,7 @@ class Like(MyBaseModel):
 
     class Meta:
         unique_together = ("user", "post")
-    
+
     def __str__(self):
         return f"{self.user.username} liked {self.post.title}"
 
@@ -39,16 +48,19 @@ class Mention(MyBaseModel):
 
     def __str__(self):
         return f"{self.user.username} mentioned {self.post.title}"
-    
+
+
 class Viewer(MyBaseModel):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    post = models.ForeignKey(Post, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=False, blank=False)
+    post = models.ForeignKey(Post, on_delete=models.CASCADE, null=False, blank=False)
+    count = models.PositiveIntegerField(default=1)
 
     class Meta:
         unique_together = ("user", "post")
 
     def __str__(self):
         return f"{self.user.username} viewed {self.post.title}"
+
 
 class Image(MyBaseModel):
     post = models.ForeignKey("Post", on_delete=models.CASCADE, related_name="images")
