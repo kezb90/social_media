@@ -3,6 +3,6 @@ from .views import PostListView, PostDetailView
 
 app_name = "content"
 urlpatterns = [
-    path("post_list/", PostListView.as_view(), name="post-list"),
-    path("post_detail/<int:post_id>", PostDetailView.as_view(), name="post-detail"),
+    path("post/", PostListView.as_view(), name="post-list"),
+    path("post/<int:post_id>", PostDetailView.as_view(), name="post-detail"),
 ]
