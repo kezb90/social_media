@@ -27,7 +27,8 @@ class UnfollowActionView(generics.DestroyAPIView):
         try:
             target_profile = Profile.objects.get(username=target_username)
         except Profile.DoesNotExist:
-            raise serializers.ValidationError({'error': 'This profile does not exist'})
+            raise serializers.ValidationError(
+                {'error': 'This profile does not exist'})
         return target_profile
 
     def destroy(self, request, *args, **kwargs):
@@ -35,7 +36,8 @@ class UnfollowActionView(generics.DestroyAPIView):
         follower_profile = request.user.profile
 
         # Check if the follow relationship exists
-        follow_instance = Follow.objects.filter(follower=follower_profile, following=target_profile).first()
+        follow_instance = Follow.objects.filter(
+            follower=follower_profile, following=target_profile).first()
         if follow_instance:
             follow_instance.delete()
             return Response({'message': f'You have unfollowed {target_profile.username}'}, status=status.HTTP_200_OK)
@@ -139,27 +141,84 @@ class ProfileUpdateView(generics.RetrieveUpdateAPIView):
     def update(self, request, *args, **kwargs):
         partial = kwargs.pop("partial", False)
         instance = self.get_object()
-        serializer = self.get_serializer(instance, data=request.data, partial=partial)
+        serializer = self.get_serializer(
+            instance, data=request.data, partial=partial)
         serializer.is_valid(raise_exception=True)
         self.perform_update(serializer)
         return Response(serializer.data)
 
 
-class PublicProfileView(generics.RetrieveAPIView):
-    queryset = Profile.objects.filter(is_public=True)
-    serializer_class = ProfileUpdateSerializer
-    permission_classes = [permissions.AllowAny]
-
-
-class FollowerFollowingView(generics.RetrieveAPIView):
+class FollowerFollowingListAPIView(generics.ListAPIView):
     serializer_class = FollowerFollowingSerializer
     permission_classes = [permissions.IsAuthenticated]
 
-    def get_object(self):
-        return self.request.user.profile
+    def get_queryset(self):
+        # Get public profiles
+        public_profiles = Profile.objects.filter(
+            is_public=True, is_active=True)
+
+        # Get profiles followed by the authenticated user
+        following_profiles = Profile.objects.filter(
+            followers__follower=self.request.user.profile, is_active=True)
+
+        # Combine both sets of profiles
+        profiles = public_profiles | following_profiles
+
+        return profiles
 
 
-class PublicProfileListView(generics.ListAPIView):
-    serializer_class = PublicProfileSerializer
-    queryset = Profile.objects.filter(is_public=True)
+class FollowerFollowingRetrieveAPIView(generics.RetrieveAPIView):
+    serializer_class = FollowerFollowingSerializer
     permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        # Get public profiles
+        public_profiles = Profile.objects.filter(
+            is_public=True, is_active=True)
+
+        # Get profiles followed by the authenticated user
+        following_profiles = Profile.objects.filter(
+            followers__follower=self.request.user.profile, is_active=True)
+
+        # Combine both sets of profiles
+        profiles = public_profiles | following_profiles
+
+        return profiles
+
+
+class PublicProfileView(generics.RetrieveAPIView):
+    serializer_class = ProfileUpdateSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        # Get public profiles
+        public_profiles = Profile.objects.filter(
+            is_public=True, is_active=True)
+
+        # Get profiles followed by the authenticated user
+        following_profiles = Profile.objects.filter(
+            followers__follower=self.request.user.profile, is_active=True)
+
+        # Combine both sets of profiles
+        profiles = public_profiles | following_profiles
+
+        return profiles
+
+
+class ProfileListView(generics.ListAPIView):
+    serializer_class = PublicProfileSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        # Get public profiles
+        public_profiles = Profile.objects.filter(
+            is_public=True, is_active=True)
+
+        # Get profiles followed by the authenticated user
+        following_profiles = Profile.objects.filter(
+            followers__follower=self.request.user.profile, is_active=True)
+
+        # Combine both sets of profiles
+        profiles = public_profiles | following_profiles
+
+        return profiles
