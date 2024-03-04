@@ -1,5 +1,4 @@
 from django.db import models
-from django.contrib.auth.models import User
 from accounts.models import MyBaseModel
 from accounts.models import Profile
 
@@ -7,7 +6,7 @@ from accounts.models import Profile
 
 
 class Post(MyBaseModel):
-    owner = models.ForeignKey(User, on_delete=models.CASCADE)
+    owner = models.ForeignKey(Profile, on_delete=models.CASCADE)
     title = models.CharField(max_length=200)
     caption = models.TextField()
     is_story = models.BooleanField(default=False)
@@ -61,7 +60,7 @@ class Post(MyBaseModel):
 
 
 class Like(MyBaseModel):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(Profile, on_delete=models.CASCADE)
     post = models.ForeignKey(Post, on_delete=models.CASCADE)
 
     # Get the specific post
@@ -77,7 +76,7 @@ class Like(MyBaseModel):
 
 
 class Mention(MyBaseModel):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(Profile, on_delete=models.CASCADE)
     post = models.ForeignKey(Post, on_delete=models.CASCADE)
 
     class Meta:
@@ -88,7 +87,7 @@ class Mention(MyBaseModel):
 
 
 class Viewer(MyBaseModel):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, null=False, blank=False)
+    user = models.ForeignKey(Profile, on_delete=models.CASCADE, null=False, blank=False)
     post = models.ForeignKey(Post, on_delete=models.CASCADE, null=False, blank=False)
     count = models.PositiveIntegerField(default=1)
 

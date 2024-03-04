@@ -9,9 +9,8 @@ from rest_framework.generics import (
     ListAPIView,
     RetrieveUpdateDestroyAPIView,
 )
-from django.contrib.auth.models import User
 from .models import Post, Like, Viewer, Mention
-from accounts.models import Profile
+from accounts.models import Profile, Follow
 from .serializers import UserSerializer, PostSerializer
 from django.db.utils import IntegrityError
 from django.db.models import F
@@ -24,16 +23,14 @@ class PostViewSet(viewsets.ModelViewSet):
     queryset = Post.objects.all()
 
     def get_queryset(self):
-        users_followed_by_user = Profile.objects.get(
-            user=self.request.user
-        ).get_followings()
-
+        users_followed_by_user = Follow.objects.filter(follower = self.request.user.profile)
+        print(users_followed_by_user)
         # Users that current user is allowed to see their post
-        users_allowed = users_followed_by_user | User.objects.filter(
-            username=self.request.user
-        )
+        # users_allowed = users_followed_by_user | Profile.objects.filter(
+        #     username=self.request.user
+        # )
 
-        return Post.objects.filter(owner__in=users_allowed)
+        return Post.objects.filter(owner= self.request.user)
 
 
 class PostRetrieveUpdateDestroyView(RetrieveUpdateDestroyAPIView):
@@ -52,9 +49,9 @@ class PostDetailView(APIView):
             return Response(
                 {"message": "This Post does not exist."}, status.HTTP_404_NOT_FOUND
             )
-        profile = Profile.objects.get(user=post.owner)
+        profile = Profile.objects.get(username=post.owner)
         post_serializer = PostSerializer(post, context={"request": request}, many=False)
-        if request.user in profile.get_followers() or request.user == profile.user:
+        if request.user in profile.get_followers() or request.user == profile.username:
             viewer = Viewer(user=request.user, post=post, is_active=True, count=1)
             try:
                 viewer.save()
@@ -78,11 +75,10 @@ class PostListView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request: Request):
-        profile = Profile.objects.get(user=request.user)
-        followings = profile.get_followings()
+        profile = Profile.objects.get(username=request.user)
+        followings = Follow.objects.filter(follower = profile)
         queryset = Post.objects.filter(
-            is_story=False, is_active=True, owner__in=followings
-        )
+            is_story=False, is_active=True)
         post_serializer = PostSerializer(
             queryset, context={"request": request}, many=True
         )

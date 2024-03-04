@@ -1,12 +1,13 @@
 from rest_framework import serializers
 from .models import Post, Like, Mention, Viewer, Image, Video, Audio
-from django.contrib.auth.models import User
+# from django.contrib.auth.models import User
 from rest_framework.exceptions import PermissionDenied
+from accounts.models import Profile
 
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
-        model = User
+        model = Profile
         fields = [
             "username",
         ]
