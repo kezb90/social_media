@@ -53,11 +53,12 @@ class PostAdmin(admin.ModelAdmin):
         "updated_at",
         "is_active",
     )
+
     def display_total_view_count(self, obj):
         return obj.total_view_count
-    
+
     display_total_view_count.short_description = "total_views"
-    
+
     def display_likes(self, obj):
         return obj.likes_count
 

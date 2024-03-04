@@ -16,12 +16,14 @@ landing page
     <ul class="list-group">
         <li class="list-group-item list-group-item-primary"><a class="nav-link" href="{% url 'accounts:signup' %}">SignUp</a></li>
         <li class="list-group-item list-group-item-secondary"><a class="nav-link" href="{% url 'accounts:login' %}">Login</a></li>
-        <li class="list-group-item list-group-item-success"><a class="nav-link" href="{% url 'accounts:logout' %}">Logout</a></li>
+        <li class="list-group-item list-group-item-success"><a class="nav-link" href="#">---</a></li>
         <li class="list-group-item list-group-item-danger"><a class="nav-link" href="/administrator">Admin</a></li>
         <li class="list-group-item list-group-item-warning"><a class="nav-link" href="/api/schema/swagger-ui/">swagger-ui</a></li>
-        <li class="list-group-item list-group-item-info"><a class="nav-link" href="{% url 'accounts:profile-update' %}">profile-update</a></li>
-        <li class="list-group-item list-group-item-light"><a class="nav-link" href="{% url 'accounts:follow-list' request.user %}">follow list</a></li>
-        <li class="list-group-item list-group-item-dark"><a class="nav-link" href="{% url 'accounts:follow' '@mohsen' %}">follow {{request.user.username}}</a></li>
+        <li class="list-group-item list-group-item-info"><a class="nav-link" href="{% url 'accounts:profile-update'%}">profile-update</a></li>
+        <li class="list-group-item list-group-item-light"><a class="nav-link" href="{% url 'accounts:public-profile' 1 %}">public-profile</a></li>
+        <li class="list-group-item list-group-item-dark"><a class="nav-link" href="#">follow {{request.user.username}}</a></li>
+        <li class="list-group-item list-group-item-primary"><a class="nav-link" href="{% url 'accounts:follower-following' %}">follower-following</a></li>
+        <li class="list-group-item list-group-item-secondary"><a class="nav-link" href="{% url 'accounts:public-profiles' %}">public-profiles</a></li>
     </ul>
     <hr>
     <div class="row text-center">
@@ -30,12 +32,12 @@ landing page
     <ul class="list-group">
         <li class="list-group-item list-group-item-primary"><a class="nav-link" href="{% url 'content:post-list' %}">list of post</a></li>
         <li class="list-group-item list-group-item-secondary"><a class="nav-link" href="{% url 'content:post-detail' 1 %}">post detail</a></li>
-        <li class="list-group-item list-group-item-success"><a class="nav-link" href="{% url 'accounts:logout' %}"></a></li>
+        <li class="list-group-item list-group-item-success"><a class="nav-link" href="{% url 'content:viewsetpost-list' %}">post-view-set</a></li>
         <li class="list-group-item list-group-item-danger"><a class="nav-link" href="/administrator"></a></li>
         <li class="list-group-item list-group-item-warning"><a class="nav-link" href="/api/schema/swagger-ui/"></a></li>
-        <li class="list-group-item list-group-item-info"><a class="nav-link" href="{% url 'accounts:profile-update' %}"></a></li>
-        <li class="list-group-item list-group-item-light"><a class="nav-link" href="{% url 'accounts:follow-list' request.user %}"></a></li>
-        <li class="list-group-item list-group-item-dark"><a class="nav-link" href="{% url 'accounts:follow' '@mohsen' %}"></a></li>
+        <li class="list-group-item list-group-item-info"><a class="nav-link" href="#"></a></li>
+        <li class="list-group-item list-group-item-light"><a class="nav-link" href="#"></a></li>
+        <li class="list-group-item list-group-item-dark"><a class="nav-link" href="#"></a></li>
     </ul>
 </div>
 

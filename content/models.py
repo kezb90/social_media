@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from accounts.models import MyBaseModel
+from accounts.models import Profile
 
 # Create your models here.
 
@@ -13,12 +14,19 @@ class Post(MyBaseModel):
 
     @property
     def mentioned_users(self):
-        return Mention.objects.filter(post=self, is_active=True).values_list('user__username', flat=True)
-    
+        return Mention.objects.filter(post=self, is_active=True).values_list(
+            "user__username", flat=True
+        )
+
     @property
     def total_view_count(self):
-        return Viewer.objects.filter(post=self).aggregate(models.Sum('count'))['count__sum'] or 0
-    
+        return (
+            Viewer.objects.filter(post=self).aggregate(models.Sum("count"))[
+                "count__sum"
+            ]
+            or 0
+        )
+
     @property
     def likes_count(self):
         return Like.objects.filter(post=self).count()
@@ -27,6 +35,11 @@ class Post(MyBaseModel):
     @property
     def views_count(self):
         return Viewer.objects.filter(post=self).count()
+
+    @property
+    def users_access_post_readOnly(self):
+        # return Profile.objects.get(user=self.owner).get_followers()
+        pass
 
     # Add user to mentioned list of a specific post
     def add_user_to_mention_list(self, user):
@@ -42,7 +55,7 @@ class Post(MyBaseModel):
         if Mention.objects.filter(post=self, user=user).exists():
             raise ValueError("User is already mentioned in this post.")
         Mention.objects.create(post=self, user=user, is_active=True)
-    
+
     def __str__(self):
         return f"{self.title} by {self.owner.username}"
 

@@ -49,7 +49,7 @@
                         <a class="nav-link" href="{% url 'home:about-us' %}">about us</a>
                     </li>
 
-                    {% if user.is_authenticated %}
+                    {% if request.user.is_authenticated %}
                     <li class="nav-item">
                         <a class="nav-link" href="">Logout</a>
                     </li>

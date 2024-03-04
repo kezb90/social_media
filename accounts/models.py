@@ -18,42 +18,31 @@ class MyBaseModel(models.Model):
         raise NotImplementedError("Implement __str__ method!")
 
 
-class Profile(MyBaseModel):
-    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="profile")
-    follower = models.ManyToManyField(User, blank=True, related_name="followers")
-    following = models.ManyToManyField(User, blank=True, related_name="followings")
-    bio = models.TextField(blank=True)
+class Profile(User):
     is_public = models.BooleanField(default=False)
-    birthday = models.DateField(null=True, blank=True)
+    bio = models.TextField(blank=True)
+    created_at = models.DateTimeField(verbose_name="date created", auto_now_add=True)
+    updated_at = models.DateTimeField(verbose_name="date updated", auto_now=True)
     profile_picture = models.ImageField(
         upload_to="profile_pics/", blank=True, null=True
     )
 
-    @property
-    def age(self):
-        today = date.today()
-        if self.birthday:
-            age = (
-                today.year
-                - self.birthday.year
-                - ((today.month, today.day) < (self.birthday.month, self.birthday.day))
-            )
-            return age
-        return None
+    def __str__(self):
+        return self.username
 
-    def get_followers(self):
-        followers = self.follower.all()
-        return followers
 
-    def get_followings(self):
-        followings = self.following.all()
-        return followings
+class Follow(models.Model):
+    follower = models.ForeignKey(
+        Profile, related_name="following", on_delete=models.CASCADE
+    )
+    following = models.ForeignKey(
+        Profile, related_name="followers", on_delete=models.CASCADE
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ["follower", "following"]
 
     def __str__(self):
-        return self.user.username
+        return f"{self.follower.username} is follower of {self.following.username}"
 
-
-# class Follow(models.Model):
-#     user = models.ForeignKey(User, on_delete=models.CASCADE)
-#     follower = models.ManyToManyField(User,  related_name='followers')
-#     following = models.ManyToManyField(User,  related_name='followings')
