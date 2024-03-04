@@ -1,112 +1,82 @@
 from rest_framework import serializers
-from .models import Profile
-from django.contrib.auth.models import User
-import re
-
-
-class UserSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = User
-        fields = ["id", "username", "first_name", "last_name", "email"]
-        read_only_fields = ("username",)
+from .models import Profile, Follow
 
 
 class ProfileSerializer(serializers.ModelSerializer):
-    age = serializers.ReadOnlyField()
-    user = UserSerializer(many=False)
-
     class Meta:
         model = Profile
         fields = (
             "id",
-            "user",
+            "username",
             "bio",
-            "birthday",
+            "email",
+            "password",
             "is_public",
-            "is_active",
-            "created_at",
-            "updated_at",
-            "age",
+            "profile_picture",
         )
-        read_only_fields = ("user", "created_at", "updated_at", "age")
 
 
-class SignupUserSerializer(serializers.Serializer):
+class SignUpSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Profile
+        fields = (
+            "username",
+            "email",
+            "bio",
+            "password",
+            "is_public",
+            "profile_picture",
+        )
+        extra_kwargs = {"password": {"write_only": True}}
+
+    def create(self, validated_data):
+        user = Profile.objects.create_user(**validated_data)
+        return user
+
+
+class LoginSerializer(serializers.Serializer):
     username = serializers.CharField(max_length=30)
     password = serializers.CharField(max_length=50)
-    password_2 = serializers.CharField(max_length=50)
+
+
+class ProfileUpdateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Profile
+        fields = (
+            "username",
+            "first_name",
+            "last_name",
+            "is_public",
+            "bio",
+            "profile_picture",
+        )
+        read_only_fields =['username']
+
+
+class FollowSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Follow
+        fields = ["id", "follower", "following", "created_at"]
+
+
+class FollowerFollowingSerializer(serializers.ModelSerializer):
+    follower = serializers.SerializerMethodField()
+    following = serializers.SerializerMethodField()
 
     class Meta:
-        fields = [
-            "username",
-            "password",
-            "password_2",
-        ]
+        model = Profile
+        fields = ["id", "username", "follower", "following"]
 
-    def validate_password(self, password):
-        if password != self.initial_data.get("password_2"):
-            raise serializers.ValidationError("Password does not match!.")
-        return password
+    def get_follower(self, obj):
+        followers = Follow.objects.filter(following=obj)
+        return FollowSerializer(followers, many=True).data
 
-    def validate_username(self, username):
-
-        pattern = re.compile(r"^@.*$")
-        if not bool(pattern.match(username)):
-            raise serializers.ValidationError(
-                'Invalid username. It must start with "@" and contain only lowercase letters, numbers, and underscores.'
-            )
-
-        pattern = re.compile(r"^.{5,20}$")
-        if not bool(pattern.match(username)):
-            raise serializers.ValidationError(
-                "Invalid username length. The username must be between 5 and 20 characters."
-            )
-
-        pattern = re.compile(r"^@[a-zA-Z_][a-zA-Z0-9_]*$")
-        if not bool(pattern.match(username)):
-            raise serializers.ValidationError(
-                'Invalid username format. It must start with "@" followed by a letter or underscore, and can contain only letters, numbers, and underscores.'
-            )
-
-        return username
-        """
-        {
-        "username":"@mohsen",
-        "password":"sss",
-        "password_2":"sss"
-        }
-        """
+    def get_following(self, obj):
+        following = Follow.objects.filter(follower=obj)
+        return FollowSerializer(following, many=True).data
 
 
-class LoginUserSerializer(serializers.Serializer):
-    username = serializers.CharField(max_length=30)
-    password = serializers.CharField(max_length=50)
-
-    def validate_username(self, username):
-
-        pattern = re.compile(r"^@.*$")
-        if not bool(pattern.match(username)):
-            raise serializers.ValidationError(
-                'Invalid username. It must start with "@" and contain only lowercase letters, numbers, and underscores.'
-            )
-
-        pattern = re.compile(r"^.{5,20}$")
-        if not bool(pattern.match(username)):
-            raise serializers.ValidationError(
-                "Invalid username length. The username must be between 5 and 20 characters."
-            )
-
-        pattern = re.compile(r"^@[a-zA-Z_][a-zA-Z0-9_]*$")
-        if not bool(pattern.match(username)):
-            raise serializers.ValidationError(
-                'Invalid username format. It must start with "@" followed by a letter or underscore, and can contain only letters, numbers, and underscores.'
-            )
-
-        return username
-
-    """
-        {
-        "username":"@mohsen",
-        "password":"sss"
-        }
-    """
+class PublicProfileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Profile
+        fields = ["id", "username", "is_public", "bio", "profile_picture"]
