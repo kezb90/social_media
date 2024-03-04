@@ -3,13 +3,43 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.views import APIView
-from rest_framework.generics import ListCreateAPIView, ListAPIView
+from rest_framework import viewsets
+from rest_framework.generics import (
+    ListCreateAPIView,
+    ListAPIView,
+    RetrieveUpdateDestroyAPIView,
+)
 from django.contrib.auth.models import User
 from .models import Post, Like, Viewer, Mention
 from accounts.models import Profile
 from .serializers import UserSerializer, PostSerializer
 from django.db.utils import IntegrityError
 from django.db.models import F
+from .permissions import IsOwnerOnly, IsOwnerorAccessReadOnly_Post
+
+
+class PostViewSet(viewsets.ModelViewSet):
+    permission_classes = [IsOwnerorAccessReadOnly_Post]
+    serializer_class = PostSerializer
+    queryset = Post.objects.all()
+
+    def get_queryset(self):
+        users_followed_by_user = Profile.objects.get(
+            user=self.request.user
+        ).get_followings()
+
+        # Users that current user is allowed to see their post
+        users_allowed = users_followed_by_user | User.objects.filter(
+            username=self.request.user
+        )
+
+        return Post.objects.filter(owner__in=users_allowed)
+
+
+class PostRetrieveUpdateDestroyView(RetrieveUpdateDestroyAPIView):
+    permission_classes = [IsOwnerorAccessReadOnly_Post]
+    serializer_class = PostSerializer
+    queryset = Post.objects.all()
 
 
 class PostDetailView(APIView):
@@ -23,7 +53,7 @@ class PostDetailView(APIView):
                 {"message": "This Post does not exist."}, status.HTTP_404_NOT_FOUND
             )
         profile = Profile.objects.get(user=post.owner)
-        post_serializer = PostSerializer(post, context={'request': request}, many=False)
+        post_serializer = PostSerializer(post, context={"request": request}, many=False)
         if request.user in profile.get_followers() or request.user == profile.user:
             viewer = Viewer(user=request.user, post=post, is_active=True, count=1)
             try:
@@ -34,8 +64,6 @@ class PostDetailView(APIView):
                     post_id=post_id,
                     defaults={"count": F("count") + 1},
                 )
-            user_requested_has_liked = Like.objects.filter(user=request.user, post= post).exists()
-            print(user_requested_has_liked)
             return Response(post_serializer.data, status.HTTP_200_OK)
         else:
             return Response(
@@ -55,5 +83,7 @@ class PostListView(APIView):
         queryset = Post.objects.filter(
             is_story=False, is_active=True, owner__in=followings
         )
-        post_serializer = PostSerializer(queryset, context={'request': request}, many=True)
+        post_serializer = PostSerializer(
+            queryset, context={"request": request}, many=True
+        )
         return Response(post_serializer.data, status.HTTP_200_OK)
