@@ -186,7 +186,7 @@ class FollowerFollowingRetrieveAPIView(generics.RetrieveAPIView):
         return profiles
 
 
-class PublicProfileView(generics.RetrieveAPIView):
+class ProfileRetrieveAPIView(generics.RetrieveAPIView):
     serializer_class = ProfileUpdateSerializer
     permission_classes = [permissions.IsAuthenticated]
 

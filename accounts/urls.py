@@ -2,7 +2,7 @@ from django.urls import path
 from .views import SignUpView
 from .views import LoginView
 from .views import ProfileUpdateView
-from .views import PublicProfileView
+from .views import ProfileRetrieveAPIView
 from .views import FollowerFollowingRetrieveAPIView
 from .views import ProfileListView
 from .views import FollowerFollowingListAPIView
@@ -19,7 +19,7 @@ urlpatterns = [
     path('follower-following/', FollowerFollowingListAPIView.as_view(),
          name='follower-following-list'),
     path('profile/', ProfileListView.as_view(), name='profile-list'),
-    path('profile/<int:pk>/', PublicProfileView.as_view(), name='profile-detail'),
+    path('profile/<int:pk>/', ProfileRetrieveAPIView.as_view(), name='profile-detail'),
     path('profile/update/', ProfileUpdateView.as_view(), name='profile-update'),
     path('follow/', FollowActionView.as_view(), name='follow-action'),
     path('unfollow/', UnfollowActionView.as_view(), name='unfollow-action'),
