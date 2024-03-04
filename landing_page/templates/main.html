@@ -23,7 +23,9 @@ landing page
         <li class="list-group-item list-group-item-light"><a class="nav-link" href="{% url 'accounts:public-profile' 1 %}">public-profile</a></li>
         <li class="list-group-item list-group-item-dark"><a class="nav-link" href="#">follow {{request.user.username}}</a></li>
         <li class="list-group-item list-group-item-primary"><a class="nav-link" href="{% url 'accounts:follower-following' %}">follower-following</a></li>
-        <li class="list-group-item list-group-item-secondary"><a class="nav-link" href="{% url 'accounts:public-profiles' %}">public-profiles</a></li>
+        <li class="list-group-item list-group-item-secondary"><a class="nav-link" href="{% url 'accounts:follow-action' %}">follow-action</a></li>
+        <li class="list-group-item list-group-item-danger"><a class="nav-link" href="{% url 'accounts:unfollow-action' %}">unfollow-action</a></li>
+        <li class="list-group-item list-group-item-warning"><a class="nav-link" href="###">##</a></li>
     </ul>
     <hr>
     <div class="row text-center">

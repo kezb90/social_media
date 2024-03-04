@@ -2,6 +2,11 @@ from rest_framework import serializers
 from .models import Profile, Follow
 
 
+class UnfollowActionSerializer(serializers.Serializer):
+    target_username = serializers.CharField(max_length=30)
+class FollowActionSerializer(serializers.Serializer):
+    target_username = serializers.CharField(max_length=30)
+
 class ProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = Profile
