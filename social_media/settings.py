@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     "accounts.apps.AccountsConfig",
     "landing_page.apps.LandingPageConfig",
     "content.apps.ContentConfig",
+    "direct.apps.DirectConfig",
     # THIRD PART APPS
     "drf_spectacular",
 ]

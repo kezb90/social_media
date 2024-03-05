@@ -29,6 +29,7 @@ urlpatterns = (
         path("", include("landing_page.urls", namespace="home")),
         path("accounts/", include("accounts.urls", namespace="accounts")),
         path("content/", include("content.urls", namespace="content")),
+        path("direct/", include("direct.urls", namespace="direct")),
         path("api/token/", TokenObtainPairView.as_view(), name="token_obtain_pair"),
         path("api/token/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
         path("api-auth/", include("rest_framework.urls")),
