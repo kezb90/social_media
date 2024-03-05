@@ -26,11 +26,13 @@ class ProfileAdmin(admin.ModelAdmin):
     list_display = (
         "id",
         "username",
+        "is_active",
         "get_followers_list",  # Add the custom method to list_display
         "get_following_list",  # Add the custom method to list_display
         "is_public",
         "bio",
     )
+    list_editable = ['is_active']
     list_display_links = ("id", "username")
     search_fields = ("fisrt_name", "last_name", "id")
     inlines = [FollowersInline, FollowingInline]
