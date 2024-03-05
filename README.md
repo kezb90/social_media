@@ -1,3 +1,4 @@
+
 # Django Social Media Project
 
 ## Overview
@@ -103,3 +104,9 @@ The `logger` app provides middleware for logging requests and responses. It capt
 |-- requirements.txt
 |-- README.md
 |-- ...other project files
+
+### Django Rest Framework
+
+This project is built on top of Django Rest Framework (DRF), a powerful and flexible toolkit for building Web APIs in Django. DRF provides a rich set of features, including serialization, authentication, and viewsets, making it an ideal choice for developing API-based applications.
+
+For more information about Django Rest Framework, visit [DRF Documentation](https://www.django-rest-framework.org/).
