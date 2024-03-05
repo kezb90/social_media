@@ -9,7 +9,6 @@ import time
 from django.http import HttpResponseBadRequest
 from rest_framework.response import Response
 
-
 class SendMessageAPIView(generics.CreateAPIView):
     serializer_class = MessageSerializer
     permission_classes = [IsAuthenticated]
@@ -26,19 +25,6 @@ class ReceivedMessagesAPIView(generics.ListAPIView):
 
     def get_queryset(self):
         return Message.objects.filter(receiver=self.request.user).order_by("-timestamp")
-
-    def list(self, request, *args, **kwargs):
-        queryset = self.get_queryset()
-
-        # Implement long polling by holding the request for a maximum of 30 seconds
-        for _ in range(5):
-            if queryset.exists():
-                serializer = self.get_serializer(queryset, many=True)
-                return Response(serializer.data)
-
-            time.sleep(1)  # Adjust the sleep time as needed
-
-        return HttpResponseBadRequest("No new messages within the timeout.")
 
 
 class AllUserMessagesAPIView(generics.ListAPIView):
