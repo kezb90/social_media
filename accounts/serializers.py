@@ -10,15 +10,14 @@ class FollowActionSerializer(serializers.Serializer):
 class ProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = Profile
-        fields = (
-            "id",
-            "username",
-            "bio",
-            "email",
-            "password",
-            "is_public",
-            "profile_picture",
-        )
+        fields = [
+            'id',
+            'username',
+            'bio',
+            'email',
+            'is_public',
+            'profile_picture',
+        ]
 
 
 class SignUpSerializer(serializers.ModelSerializer):
