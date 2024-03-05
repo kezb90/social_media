@@ -12,7 +12,7 @@ from .serializers import (
     FollowerFollowingSerializer,
     PublicProfileSerializer,
     FollowActionSerializer,
-    UnfollowActionSerializer
+    UnfollowActionSerializer,
 )
 from .permissions import IsUnauthenticated
 from .models import Profile, Follow
@@ -23,12 +23,11 @@ class UnfollowActionView(generics.DestroyAPIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def get_object(self):
-        target_username = self.request.data.get('target_username', '')
+        target_username = self.request.data.get("target_username", "")
         try:
             target_profile = Profile.objects.get(username=target_username)
         except Profile.DoesNotExist:
-            raise serializers.ValidationError(
-                {'error': 'This profile does not exist'})
+            raise serializers.ValidationError({"error": "This profile does not exist"})
         return target_profile
 
     def destroy(self, request, *args, **kwargs):
@@ -37,12 +36,19 @@ class UnfollowActionView(generics.DestroyAPIView):
 
         # Check if the follow relationship exists
         follow_instance = Follow.objects.filter(
-            follower=follower_profile, following=target_profile).first()
+            follower=follower_profile, following=target_profile
+        ).first()
         if follow_instance:
             follow_instance.delete()
-            return Response({'message': f'You have unfollowed {target_profile.username}'}, status=status.HTTP_200_OK)
+            return Response(
+                {"message": f"You have unfollowed {target_profile.username}"},
+                status=status.HTTP_200_OK,
+            )
         else:
-            return Response({'message': 'You are not following this user'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                {"message": "You are not following this user"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
 
 class FollowActionView(generics.CreateAPIView):
@@ -141,8 +147,7 @@ class ProfileUpdateView(generics.RetrieveUpdateAPIView):
     def update(self, request, *args, **kwargs):
         partial = kwargs.pop("partial", False)
         instance = self.get_object()
-        serializer = self.get_serializer(
-            instance, data=request.data, partial=partial)
+        serializer = self.get_serializer(instance, data=request.data, partial=partial)
         serializer.is_valid(raise_exception=True)
         self.perform_update(serializer)
         return Response(serializer.data)
@@ -154,12 +159,12 @@ class FollowerFollowingListAPIView(generics.ListAPIView):
 
     def get_queryset(self):
         # Get public profiles
-        public_profiles = Profile.objects.filter(
-            is_public=True, is_active=True)
+        public_profiles = Profile.objects.filter(is_public=True, is_active=True)
 
         # Get profiles followed by the authenticated user
         following_profiles = Profile.objects.filter(
-            followers__follower=self.request.user.profile, is_active=True)
+            followers__follower=self.request.user.profile, is_active=True
+        )
 
         # Combine both sets of profiles
         profiles = public_profiles | following_profiles
@@ -173,12 +178,12 @@ class FollowerFollowingRetrieveAPIView(generics.RetrieveAPIView):
 
     def get_queryset(self):
         # Get public profiles
-        public_profiles = Profile.objects.filter(
-            is_public=True, is_active=True)
+        public_profiles = Profile.objects.filter(is_public=True, is_active=True)
 
         # Get profiles followed by the authenticated user
         following_profiles = Profile.objects.filter(
-            followers__follower=self.request.user.profile, is_active=True)
+            followers__follower=self.request.user.profile, is_active=True
+        )
 
         # Combine both sets of profiles
         profiles = public_profiles | following_profiles
@@ -192,12 +197,12 @@ class ProfileRetrieveAPIView(generics.RetrieveAPIView):
 
     def get_queryset(self):
         # Get public profiles
-        public_profiles = Profile.objects.filter(
-            is_public=True, is_active=True)
+        public_profiles = Profile.objects.filter(is_public=True, is_active=True)
 
         # Get profiles followed by the authenticated user
         following_profiles = Profile.objects.filter(
-            followers__follower=self.request.user.profile, is_active=True)
+            followers__follower=self.request.user.profile, is_active=True
+        )
 
         # Combine both sets of profiles
         profiles = public_profiles | following_profiles
@@ -211,12 +216,12 @@ class ProfileListView(generics.ListAPIView):
 
     def get_queryset(self):
         # Get public profiles
-        public_profiles = Profile.objects.filter(
-            is_public=True, is_active=True)
+        public_profiles = Profile.objects.filter(is_public=True, is_active=True)
 
         # Get profiles followed by the authenticated user
         following_profiles = Profile.objects.filter(
-            followers__follower=self.request.user.profile, is_active=True)
+            followers__follower=self.request.user.profile, is_active=True
+        )
 
         # Combine both sets of profiles
         profiles = public_profiles | following_profiles

@@ -4,19 +4,22 @@ from .models import Profile, Follow
 
 class UnfollowActionSerializer(serializers.Serializer):
     target_username = serializers.CharField(max_length=30)
+
+
 class FollowActionSerializer(serializers.Serializer):
     target_username = serializers.CharField(max_length=30)
+
 
 class ProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = Profile
         fields = [
-            'id',
-            'username',
-            'bio',
-            'email',
-            'is_public',
-            'profile_picture',
+            "id",
+            "username",
+            "bio",
+            "email",
+            "is_public",
+            "profile_picture",
         ]
 
 
@@ -54,7 +57,7 @@ class ProfileUpdateSerializer(serializers.ModelSerializer):
             "bio",
             "profile_picture",
         )
-        read_only_fields =['username']
+        read_only_fields = ["username"]
 
 
 class FollowSerializer(serializers.ModelSerializer):

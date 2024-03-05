@@ -19,8 +19,8 @@ class AudioInline(admin.StackedInline):
 
 @admin.register(Message)
 class MessageAdmin(admin.ModelAdmin):
-    list_display = ('sender', 'receiver', 'content', 'timestamp')
-    search_fields = ('sender__username', 'receiver__username', 'content')
-    list_filter = ('timestamp', 'sender', 'receiver')
+    list_display = ("sender", "receiver", "content", "timestamp")
+    search_fields = ("sender__username", "receiver__username", "content")
+    list_filter = ("timestamp", "sender", "receiver")
 
     inlines = [VideoInline, ImageInline, AudioInline]

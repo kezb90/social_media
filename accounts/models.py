@@ -45,4 +45,3 @@ class Follow(models.Model):
 
     def __str__(self):
         return f"{self.follower.username} is follower of {self.following.username}"
-

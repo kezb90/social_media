@@ -4,19 +4,22 @@ from .models import Profile, Follow
 
 # Register your models here.
 
+
 # Inline class for followers
 class FollowersInline(admin.TabularInline):
     model = Follow
-    fk_name = 'following'
-    verbose_name_plural = 'Followers'
+    fk_name = "following"
+    verbose_name_plural = "Followers"
     extra = 1
+
 
 # Inline class for following users
 class FollowingInline(admin.TabularInline):
     model = Follow
-    fk_name = 'follower'
-    verbose_name_plural = 'Following'
+    fk_name = "follower"
+    verbose_name_plural = "Following"
     extra = 1
+
 
 @register(Profile)
 class ProfileAdmin(admin.ModelAdmin):
@@ -46,6 +49,7 @@ class ProfileAdmin(admin.ModelAdmin):
         return ", ".join([followed.following.username for followed in following])
 
     get_following_list.short_description = "Following"  # Set the column header
+
 
 @admin.register(Follow)
 class FollowAdmin(admin.ModelAdmin):

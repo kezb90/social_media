@@ -36,10 +36,12 @@ class AudioInline(admin.StackedInline):
 
 
 class LikeAdmin(admin.ModelAdmin):
-    list_display = ("id","user", "post")
+    list_display = ("id", "user", "post")
+
 
 class TagAdmin(admin.ModelAdmin):
-    list_display = ("id","user", "post")
+    list_display = ("id", "user", "post")
+
 
 class PostAdmin(admin.ModelAdmin):
     list_display = (
@@ -51,7 +53,6 @@ class PostAdmin(admin.ModelAdmin):
         "updated_at",
         "is_active",
     )
-
 
     list_display_links = ("id", "title")
     search_fields = ("title", "caption", "id")

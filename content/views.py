@@ -7,7 +7,12 @@ from rest_framework import generics
 from rest_framework import mixins
 from .models import Post, Like, Viewer, Tag
 from accounts.models import Profile, Follow
-from .serializers import PostSerializer, PostCreateUpdateSerializer, LikeSerializer, TagSerializer
+from .serializers import (
+    PostSerializer,
+    PostCreateUpdateSerializer,
+    LikeSerializer,
+    TagSerializer,
+)
 from .permissions import IsOwnerOnly, IsOwnerorAccessReadOnly_Post
 from rest_framework.decorators import action
 from django.shortcuts import get_object_or_404
@@ -17,7 +22,8 @@ class AddTagView(generics.CreateAPIView):
     serializer_class = TagSerializer
     permission_classes = [IsAuthenticated]
     queryset = Tag.objects.all()
-   
+
+
 class RemoveTagView(generics.DestroyAPIView):
     serializer_class = TagSerializer
     permission_classes = [IsAuthenticated]
@@ -28,12 +34,14 @@ class AddLikeView(generics.CreateAPIView):
     serializer_class = LikeSerializer
     permission_classes = [IsAuthenticated]
     queryset = Like.objects.all()
-    
+
+
 class RemoveLikeView(generics.DestroyAPIView):
     serializer_class = LikeSerializer
     permission_classes = [IsAuthenticated]
     queryset = Like.objects.all()
-        
+
+
 class PostViewSet(viewsets.ModelViewSet):
     queryset = Post.objects.all()
     serializer_class = PostSerializer
@@ -44,7 +52,7 @@ class PostViewSet(viewsets.ModelViewSet):
         return Post.objects.filter(owner=self.request.user)
 
     def get_serializer_class(self):
-        if self.action in ['create', 'update', 'partial_update']:
+        if self.action in ["create", "update", "partial_update"]:
             return PostCreateUpdateSerializer
         return PostSerializer
 
@@ -56,12 +64,18 @@ class PostViewSet(viewsets.ModelViewSet):
         # Ensure users can only update their own posts
         instance = self.get_object()
         if instance.owner != self.request.user.profile:
-            return Response({"detail": "You do not have permission to perform this action."}, status=403)
+            return Response(
+                {"detail": "You do not have permission to perform this action."},
+                status=403,
+            )
         return super().update(request, *args, **kwargs)
 
     def destroy(self, request, *args, **kwargs):
         # Ensure users can only delete their own posts
         instance = self.get_object()
         if instance.owner != self.request.user.profile:
-            return Response({"detail": "You do not have permission to perform this action."}, status=403)
+            return Response(
+                {"detail": "You do not have permission to perform this action."},
+                status=403,
+            )
         return super().destroy(request, *args, **kwargs)

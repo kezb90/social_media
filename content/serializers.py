@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from .models import Post, Like, Tag, Viewer, Image, Video, Audio
+
 # from django.contrib.auth.models import User
 from rest_framework.exceptions import PermissionDenied
 from accounts.models import Profile
@@ -17,22 +18,20 @@ class TagSerializer(serializers.ModelSerializer):
         model = Tag
         fields = ("id", "user", "post")
 
-    
-
 
 class LikeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Like
-        fields = ['id', 'user', 'post']
+        fields = ["id", "user", "post"]
 
 
 class PostCreateUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Post
         fields = [
-            'title',
-            'caption',
-            'is_active',
+            "title",
+            "caption",
+            "is_active",
         ]
 
 
@@ -43,10 +42,10 @@ class PostSerializer(serializers.ModelSerializer):
     class Meta:
         model = Post
         fields = [
-            'id',
-            'owner',
-            'title',
-            'caption',
+            "id",
+            "owner",
+            "title",
+            "caption",
             "likes",
         ]
 

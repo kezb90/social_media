@@ -6,9 +6,11 @@ from accounts.models import Profile
 
 class Message(models.Model):
     sender = models.ForeignKey(
-        Profile, related_name='sent_messages', on_delete=models.CASCADE)
+        Profile, related_name="sent_messages", on_delete=models.CASCADE
+    )
     receiver = models.ForeignKey(
-        Profile, related_name='received_messages', on_delete=models.CASCADE)
+        Profile, related_name="received_messages", on_delete=models.CASCADE
+    )
     content = models.TextField()
     timestamp = models.DateTimeField(auto_now_add=True)
 
@@ -17,8 +19,7 @@ class Message(models.Model):
 
 
 class MedaiMessageBaseModel(models.Model):
-    created_at = models.DateTimeField(
-        verbose_name="media created", auto_now_add=True)
+    created_at = models.DateTimeField(verbose_name="media created", auto_now_add=True)
     caption = models.TextField(blank=True)
 
     class Meta:
@@ -31,9 +32,9 @@ class MedaiMessageBaseModel(models.Model):
 
 class Image(MedaiMessageBaseModel):
     message = models.OneToOneField(
-        Message, on_delete=models.CASCADE, related_name="image")
+        Message, on_delete=models.CASCADE, related_name="image"
+    )
     image = models.ImageField(upload_to="Message/Media/image/")
-    
 
     def __str__(self):
         return f"image sent by {self.message.sender.username} to {self.message.receiver.username} in {self.created_at}"
@@ -41,7 +42,8 @@ class Image(MedaiMessageBaseModel):
 
 class Video(MedaiMessageBaseModel):
     message = models.OneToOneField(
-        Message, on_delete=models.CASCADE, related_name="video")
+        Message, on_delete=models.CASCADE, related_name="video"
+    )
     video_file = models.FileField(upload_to="Post/Media/viedo/")
 
     def __str__(self):
@@ -50,7 +52,8 @@ class Video(MedaiMessageBaseModel):
 
 class Audio(MedaiMessageBaseModel):
     message = models.OneToOneField(
-        Message, on_delete=models.CASCADE, related_name="audio")
+        Message, on_delete=models.CASCADE, related_name="audio"
+    )
     audio_file = models.FileField(upload_to="Post/Media/audio/")
 
     def __str__(self):

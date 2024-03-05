@@ -9,16 +9,15 @@ from .views import RemoveLikeView
 from .views import AddLikeView
 
 router = DefaultRouter()
-router.register(r'posts', PostViewSet, basename='post')
+router.register(r"posts", PostViewSet, basename="post")
 
-app_name = 'content'
+app_name = "content"
 
 urlpatterns = [
-    path('api/', include(router.urls)),
-    path('api/add-like/', AddLikeView.as_view(), name='add-like'),
-    path('api/remove-like/<int:pk>/', RemoveLikeView.as_view(), name='remove-like'),
-    path('api/add-tag/', AddTagView.as_view(), name='add-tag'),
-    path('api/remove-tag/<int:pk>/', RemoveTagView.as_view(), name='remove-tag'),
-    
+    path("api/", include(router.urls)),
+    path("api/add-like/", AddLikeView.as_view(), name="add-like"),
+    path("api/remove-like/<int:pk>/", RemoveLikeView.as_view(), name="remove-like"),
+    path("api/add-tag/", AddTagView.as_view(), name="add-tag"),
+    path("api/remove-tag/<int:pk>/", RemoveTagView.as_view(), name="remove-tag"),
     # Other URL patterns...
 ]

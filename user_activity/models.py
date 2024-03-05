@@ -6,7 +6,9 @@ from content.models import Post
 class Comment(MyBaseModel):
     user = models.ForeignKey(Profile, on_delete=models.CASCADE)
     post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name="comments")
-    parent_comment = models.ForeignKey("self", on_delete=models.CASCADE, null=True, blank=True, related_name="replies")
+    parent_comment = models.ForeignKey(
+        "self", on_delete=models.CASCADE, null=True, blank=True, related_name="replies"
+    )
     content = models.TextField()
 
     def __str__(self):

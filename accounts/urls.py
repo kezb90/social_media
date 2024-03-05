@@ -14,14 +14,19 @@ app_name = "accounts"
 urlpatterns = [
     path("signup/", SignUpView.as_view(), name="signup"),
     path("login/", LoginView.as_view(), name="login"),
-    path('follower-following/<int:pk>', FollowerFollowingRetrieveAPIView.as_view(),
-         name='follower-following-detail'),
-    path('follower-following/', FollowerFollowingListAPIView.as_view(),
-         name='follower-following-list'),
-    path('profile/', ProfileListView.as_view(), name='profile-list'),
-    path('profile/<int:pk>/', ProfileRetrieveAPIView.as_view(), name='profile-detail'),
-    path('profile/update/', ProfileUpdateView.as_view(), name='profile-update'),
-    path('follow/', FollowActionView.as_view(), name='follow-action'),
-    path('unfollow/', UnfollowActionView.as_view(), name='unfollow-action'),
-
+    path(
+        "follower-following/<int:pk>",
+        FollowerFollowingRetrieveAPIView.as_view(),
+        name="follower-following-detail",
+    ),
+    path(
+        "follower-following/",
+        FollowerFollowingListAPIView.as_view(),
+        name="follower-following-list",
+    ),
+    path("profile/", ProfileListView.as_view(), name="profile-list"),
+    path("profile/<int:pk>/", ProfileRetrieveAPIView.as_view(), name="profile-detail"),
+    path("profile/update/", ProfileUpdateView.as_view(), name="profile-update"),
+    path("follow/", FollowActionView.as_view(), name="follow-action"),
+    path("unfollow/", UnfollowActionView.as_view(), name="unfollow-action"),
 ]
