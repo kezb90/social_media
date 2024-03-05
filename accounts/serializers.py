@@ -1,5 +1,7 @@
 from rest_framework import serializers
 from .models import Profile, Follow
+from django.core.exceptions import ValidationError
+import re
 
 
 class UnfollowActionSerializer(serializers.Serializer):
@@ -39,6 +41,23 @@ class SignUpSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         user = Profile.objects.create_user(**validated_data)
         return user
+
+    def validate_username(self, value):
+        """
+        Custom validator for the 'username' field.
+        """
+        if not value.startswith("@"):
+            raise ValidationError("Username must start with '@'.")
+
+        if len(value) <= 4:
+            raise ValidationError("Username must be more than 4 characters long.")
+
+        if not re.match(r"^[@\w.+-]+$", value):
+            raise ValidationError(
+                "Invalid characters in the username. Only letters, digits, '@', '.', '+', '-', and '_' are accepted."
+            )
+
+        return value
 
 
 class LoginSerializer(serializers.Serializer):

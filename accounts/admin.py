@@ -32,7 +32,7 @@ class ProfileAdmin(admin.ModelAdmin):
         "is_public",
         "bio",
     )
-    list_editable = ['is_active']
+    list_editable = ["is_active"]
     list_display_links = ("id", "username")
     search_fields = ("fisrt_name", "last_name", "id")
     inlines = [FollowersInline, FollowingInline]
