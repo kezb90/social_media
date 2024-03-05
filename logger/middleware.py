@@ -5,9 +5,7 @@ import time
 from datetime import datetime
 
 # Get the current directory of the Django app
-
 current_directory = os.path.dirname(os.path.abspath(__file__))
-print("current dir:", current_directory)
 # Construct the log file path in the current directory
 LOG_FILE_PATH = os.path.join(current_directory, "log_file.json")
 print("LOG FILE PATH:", LOG_FILE_PATH)
