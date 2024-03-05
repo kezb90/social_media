@@ -56,7 +56,7 @@ landing page
     <ul class="list-group">
         {% if request.user.is_authenticated %}
         <li class="list-group-item list-group-item-primary"><a class="nav-link" href="{% url 'direct:send_message_api' 2 %}">send_message_api</a></li>
-        <li class="list-group-item list-group-item-secondary"><a class="nav-link" href="{% url 'direct:received_messages_api' %}">received_messages_api</a></li>
+        <li class="list-group-item list-group-item-secondary"><a class="nav-link" href="{% url 'direct:user_messages_api' '@mohsen' %}">user_messages_api</a></li>
         <li class="list-group-item list-group-item-secondary"><a class="nav-link" href="{% url 'direct:all_user_messages_api' %}">all_user_messages_api</a></li>
         <li class="list-group-item list-group-item-success"><a class="nav-link" href="# %}">#</a></li>
         <li class="list-group-item list-group-item-success"><a class="nav-link" href="#">#</a></li>
