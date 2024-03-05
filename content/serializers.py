@@ -1,17 +1,9 @@
 from rest_framework import serializers
-from .models import Post, Like, Mention, Viewer, Image, Video, Audio
+from .models import Post, Like, Tag, Viewer, Image, Video, Audio
 # from django.contrib.auth.models import User
 from rest_framework.exceptions import PermissionDenied
 from accounts.models import Profile
-
-
-class UserSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Profile
-        fields = [
-            "username",
-        ]
-        read_only_fields = ("username",)
+from accounts.serializers import ProfileSerializer
 
 
 class ViewerSerializer(serializers.ModelSerializer):
@@ -20,46 +12,43 @@ class ViewerSerializer(serializers.ModelSerializer):
         fields = ("user", "post")
 
 
-class MentionSerializer(serializers.ModelSerializer):
+class TagSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Mention
-        fields = ("user", "post")
+        model = Tag
+        fields = ("id", "user", "post")
+
+    
 
 
 class LikeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Like
-        fields = ("user", "post")
+        fields = ['id', 'user', 'post']
+
+
+class PostCreateUpdateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Post
+        fields = [
+            'title',
+            'caption',
+            'is_active',
+        ]
 
 
 class PostSerializer(serializers.ModelSerializer):
-    mentioned = serializers.SerializerMethodField(read_only=True)
-    # owner = UserSerializer(many=False )
-    likes = serializers.SerializerMethodField(read_only=True)
-    total_viewed = serializers.SerializerMethodField(read_only=True)
-    person_viewed = serializers.SerializerMethodField(read_only=True)
-    is_like = serializers.SerializerMethodField(read_only=True)
-    # owner_username = UserSerializer(many=False )
-    # total_post_view = serializers.SerializerMethodField(read_only=True)
+    owner = ProfileSerializer(read_only=True)
+    likes = ProfileSerializer(many=True, read_only=True)
 
     class Meta:
         model = Post
-        fields = (
-            "id",
-            "owner",
-            "title",
-            "caption",
-            "mentioned",
+        fields = [
+            'id',
+            'owner',
+            'title',
+            'caption',
             "likes",
-            "total_viewed",
-            "person_viewed",
-            "is_like",
-            "is_active",
-            "is_story",
-            "created_at",
-            "updated_at",
-        )
-        # read_only_fields = ("owner",)
+        ]
 
     def create(self, validated_data):
         request_user = self.context["request"].user
@@ -71,20 +60,3 @@ class PostSerializer(serializers.ModelSerializer):
             )
 
         return super().create(validated_data)
-
-    def get_total_viewed(self, obj):
-        return obj.total_view_count
-
-    def get_mentioned(self, obj):
-        mentioned_users = obj.mentioned_users
-        return list(mentioned_users)
-
-    def get_is_like(self, obj):
-        request_user = self.context["request"].user
-        return Like.objects.filter(user=request_user, post=obj).exists()
-
-    def get_likes(self, obj):
-        return obj.likes_count
-
-    def get_person_viewed(self, obj):
-        return obj.views_count

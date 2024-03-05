@@ -9,54 +9,9 @@ class Post(MyBaseModel):
     owner = models.ForeignKey(Profile, on_delete=models.CASCADE)
     title = models.CharField(max_length=200)
     caption = models.TextField()
-    is_story = models.BooleanField(default=False)
-
-    @property
-    def mentioned_users(self):
-        return Mention.objects.filter(post=self, is_active=True).values_list(
-            "user__username", flat=True
-        )
-
-    @property
-    def total_view_count(self):
-        return (
-            Viewer.objects.filter(post=self).aggregate(models.Sum("count"))[
-                "count__sum"
-            ]
-            or 0
-        )
-
-    @property
-    def likes_count(self):
-        return Like.objects.filter(post=self).count()
-
-    # Count number of persons who viewed this post
-    @property
-    def views_count(self):
-        return Viewer.objects.filter(post=self).count()
-
-    @property
-    def users_access_post_readOnly(self):
-        # return Profile.objects.get(user=self.owner).get_followers()
-        pass
-
-    # Add user to mentioned list of a specific post
-    def add_user_to_mention_list(self, user):
-        """
-        Add a user to the mentioned users of the post.
-
-        Args:
-            user (User): The user to be added.
-
-        Raises:
-            ValueError: If the user is already mentioned in the post.
-        """
-        if Mention.objects.filter(post=self, user=user).exists():
-            raise ValueError("User is already mentioned in this post.")
-        Mention.objects.create(post=self, user=user, is_active=True)
-
+    likes = models.ManyToManyField(Profile, related_name="liked_posts", through="Like")
     def __str__(self):
-        return f"{self.title} by {self.owner.username}"
+        return f"{self.title} posted by {self.owner.username}"
 
 
 class Like(MyBaseModel):
@@ -75,7 +30,7 @@ class Like(MyBaseModel):
         return f"{self.user.username} liked {self.post.title}"
 
 
-class Mention(MyBaseModel):
+class Tag(MyBaseModel):
     user = models.ForeignKey(Profile, on_delete=models.CASCADE)
     post = models.ForeignKey(Post, on_delete=models.CASCADE)
 
@@ -83,7 +38,7 @@ class Mention(MyBaseModel):
         unique_together = ("user", "post")
 
     def __str__(self):
-        return f"{self.user.username} mentioned {self.post.title}"
+        return f"{self.user.username} taged {self.post.title}"
 
 
 class Viewer(MyBaseModel):

@@ -1,21 +1,24 @@
 from django.urls import path, include
-from .views import (
-    PostListView,
-    PostDetailView,
-    PostRetrieveUpdateDestroyView,
-    PostViewSet,
-)
 from rest_framework.routers import DefaultRouter
 
-router = DefaultRouter()
-router.register("PostViewSet", PostViewSet, basename="viewsetpost")
+from .views import PostViewSet
 
-app_name = "content"
+from .views import AddTagView
+from .views import RemoveTagView
+from .views import RemoveLikeView
+from .views import AddLikeView
+
+router = DefaultRouter()
+router.register(r'posts', PostViewSet, basename='post')
+
+app_name = 'content'
+
 urlpatterns = [
-    path("post/", PostListView.as_view(), name="post-list"),
-    path("post/<int:post_id>", PostDetailView.as_view(), name="post-detail"),
-    path(
-        "post_cbv/<pk>", PostRetrieveUpdateDestroyView.as_view(), name="post-list-cvb"
-    ),
-    path("viewsets/", include(router.urls)),
+    path('api/', include(router.urls)),
+    path('api/add-like/', AddLikeView.as_view(), name='add-like'),
+    path('api/remove-like/<int:pk>/', RemoveLikeView.as_view(), name='remove-like'),
+    path('api/add-tag/', AddTagView.as_view(), name='add-tag'),
+    path('api/remove-tag/<int:pk>/', RemoveTagView.as_view(), name='remove-tag'),
+    
+    # Other URL patterns...
 ]
