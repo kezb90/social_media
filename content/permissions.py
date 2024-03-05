@@ -1,7 +1,5 @@
 # permissions.py
 from rest_framework import permissions
-from accounts.models import Profile
-from .models import Post
 
 
 class IsOwnerorAccessReadOnly_Post(permissions.BasePermission):

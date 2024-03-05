@@ -1,19 +1,14 @@
-from rest_framework import status
-from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import viewsets
 from rest_framework import generics
-from rest_framework import mixins
-from .models import Post, Like, Viewer, Tag
-from accounts.models import Profile, Follow
+from .models import Post, Like, Tag
 from .serializers import (
     PostSerializer,
     PostCreateUpdateSerializer,
     LikeSerializer,
     TagSerializer,
 )
-from .permissions import IsOwnerOnly, IsOwnerorAccessReadOnly_Post
 from rest_framework.decorators import action
 from django.shortcuts import get_object_or_404
 

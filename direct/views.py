@@ -5,7 +5,6 @@ from .serializers import MessageSerializer
 from django.db import models
 from django.shortcuts import get_object_or_404
 from accounts.models import Profile
-from rest_framework.response import Response
 
 
 class SendMessageAPIView(generics.CreateAPIView):

@@ -1,6 +1,6 @@
 from rest_framework import generics, permissions
 from .models import Comment
-from .serializers import CommentSerializer, CommentCreateSerializer
+from .serializers import CommentSerializer
 from .permissions import IsOwnerOrReadOnly
 
 

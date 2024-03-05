@@ -1,9 +1,6 @@
 from rest_framework import serializers
-from .models import Post, Like, Tag, Viewer, Image, Video, Audio
-
-# from django.contrib.auth.models import User
+from .models import Post, Like, Tag, Viewer
 from rest_framework.exceptions import PermissionDenied
-from accounts.models import Profile
 from accounts.serializers import ProfileSerializer
 
 
