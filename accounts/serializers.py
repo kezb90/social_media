@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Profile, Follow
+from .models import Profile, Follow, FollowRequest
 from django.core.exceptions import ValidationError
 import re
 
@@ -106,3 +106,9 @@ class PublicProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = Profile
         fields = ["id", "username", "is_public", "bio", "profile_picture"]
+
+
+class FollowRequestSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = FollowRequest
+        fields = "__all__"

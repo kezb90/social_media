@@ -8,6 +8,7 @@ from .views import ProfileListView
 from .views import FollowerFollowingListAPIView
 from .views import FollowActionView
 from .views import UnfollowActionView
+from .views import send_follow_request
 
 app_name = "accounts"
 
@@ -29,4 +30,5 @@ urlpatterns = [
     path("profile/update/", ProfileUpdateView.as_view(), name="profile-update"),
     path("follow/", FollowActionView.as_view(), name="follow-action"),
     path("unfollow/", UnfollowActionView.as_view(), name="unfollow-action"),
+    path('api/send_follow_request/<str:target_username>/', send_follow_request, name='send_follow_request'),
 ]

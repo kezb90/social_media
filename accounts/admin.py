@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.contrib.admin import register
-from .models import Profile, Follow
+from .models import Profile, Follow , FollowRequest
 
 # Register your models here.
 
@@ -58,3 +58,15 @@ class FollowAdmin(admin.ModelAdmin):
     list_display = ["follower", "following", "created_at"]
     search_fields = ["follower__username", "following__username"]
     list_filter = ["created_at", "follower", "following"]
+
+
+@admin.register(FollowRequest)
+class FollowRequestAdmin(admin.ModelAdmin):
+    list_display = ("from_user", "to_user", "created_at", "accepted")
+    list_filter = ("accepted", "created_at")
+    search_fields = ("from_user__username", "to_user__username")
+    date_hierarchy = "created_at"
+
+    def has_add_permission(self, request):
+        # Disable the ability to add FollowRequest instances through the admin interface
+        return False

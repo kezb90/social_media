@@ -50,6 +50,7 @@ class Profile(User):
     """
 
     # Get followers
+    @property
     def followers(self):
         return Profile.objects.filter(followings__following=self)
 
@@ -59,6 +60,7 @@ class Profile(User):
     """
 
     # Get followings
+    @property
     def followings(self):
         return Profile.objects.filter(followers__follower=self)
 
@@ -86,6 +88,7 @@ class FollowRequest(models.Model):
     to_user = models.ForeignKey(
         Profile, related_name="follow_requests_received", on_delete=models.CASCADE
     )
+    accepted = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:

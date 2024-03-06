@@ -12,9 +12,11 @@ from .serializers import (
     PublicProfileSerializer,
     FollowActionSerializer,
     UnfollowActionSerializer,
+    FollowRequestSerializer,
 )
+from rest_framework.decorators import api_view, permission_classes
 from .permissions import IsUnauthenticated
-from .models import Profile, Follow
+from .models import Profile, Follow, FollowRequest
 
 
 class UnfollowActionView(generics.DestroyAPIView):
@@ -226,3 +228,61 @@ class ProfileListView(generics.ListAPIView):
         profiles = public_profiles | following_profiles
 
         return profiles
+
+
+@api_view(["POST"])
+@permission_classes([permissions.IsAuthenticated])
+def send_follow_request(request, target_username):
+    try:
+        target_profile = Profile.objects.get(username=target_username)
+    except Profile.DoesNotExist:
+        return Response(
+            {"error": f"Profile with username {target_username} not found."},
+            status=status.HTTP_404_NOT_FOUND,
+        )
+
+    user_profile = request.user.profile
+
+    # Check if the user is already following the target profile
+    if target_profile in request.user.profile.followings:
+        return Response(
+            {"message": f"You are already following {target_profile.username}."},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+
+    # Check if the target profile is public
+    if target_profile.is_public:
+        Follow.objects.create(follower=user_profile, following=target_profile)
+        return Response(
+            {"message": f"Follow request sent to {target_profile.username}."},
+            status=status.HTTP_201_CREATED,
+        )
+    else:
+        # Check if a follow request already exists
+        if FollowRequest.objects.filter(
+            from_user=user_profile, to_user=target_profile, accepted=False
+        ).exists():
+            return Response(
+                {
+                    "message": f"Follow request to {target_profile.username} is already pending."
+                },
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        # Create a new follow request
+        follow_request_data = {
+            "from_user": user_profile.pk,
+            "to_user": target_profile.pk,
+        }
+        follow_request_serializer = FollowRequestSerializer(data=follow_request_data)
+        if follow_request_serializer.is_valid():
+            follow_request_serializer.save()
+            return Response(
+                {"message": f"Follow request sent to {target_profile.username}."},
+                status=status.HTTP_201_CREATED,
+            )
+        else:
+            return Response(
+                {"error": "Invalid follow request data."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
