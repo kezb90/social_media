@@ -28,7 +28,6 @@ class PostCreateUpdateSerializer(serializers.ModelSerializer):
         fields = [
             "title",
             "caption",
-            "is_active",
         ]
 
 

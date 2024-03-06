@@ -24,10 +24,10 @@ landing page
         <li class="list-group-item list-group-item-primary"><a class="nav-link" href="{% url 'accounts:follower-following-detail' request.user.id %}">follower-following-detail</a></li>
         <li class="list-group-item list-group-item-secondary"><a class="nav-link" href="{% url 'accounts:follow-action' %}">follow-action</a></li>
         <li class="list-group-item list-group-item-danger"><a class="nav-link" href="{% url 'accounts:unfollow-action' %}">unfollow-action</a></li>
+        <li class="list-group-item list-group-item-danger"><a class="nav-link" href="{% url 'accounts:send_follow_request' '@sara' %}">send_follow_request to @sara</a></li>
         <li class="list-group-item list-group-item-warning"><a class="nav-link" href="/api/schema/swagger-ui/">swagger-ui</a></li>
-        <li class="list-group-item list-group-item-dark"><a class="nav-link" href="#">follow {{request.user.username}}</a></li>
-        <li class="list-group-item list-group-item-danger"><a class="nav-link" href="{% url 'accounts:send_follow_request' '@sara' %}">send_follow_request</a></li>
-        <li class="list-group-item list-group-item-warning"><a class="nav-link" href="###">##</a></li>
+        <li class="list-group-item list-group-item-dark"><a class="nav-link" href="#"></a></li>
+        <li class="list-group-item list-group-item-warning"><a class="nav-link" href="#"></a></li>
         {% endif %}
         
     </ul>

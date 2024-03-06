@@ -44,7 +44,14 @@ class PostViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         # Only return posts for the authenticated user
-        return Post.objects.filter(owner=self.request.user)
+        user = self.request.user.profile
+        owner_posts = Post.objects.filter(owner=user, is_active=True)
+        followings_by_owner_profile = user.followings
+        represent_posts = owner_posts
+        for following in followings_by_owner_profile:
+            represent_posts = represent_posts | Post.objects.filter(owner=following, is_active=True )
+    
+        return represent_posts
 
     def get_serializer_class(self):
         if self.action in ["create", "update", "partial_update"]:
@@ -53,7 +60,7 @@ class PostViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         # Set the owner of the post to the authenticated user
-        serializer.save(owner=self.request.user.profile)
+        serializer.save(owner=self.request.user.profile, is_active=False)
 
     def update(self, request, *args, **kwargs):
         # Ensure users can only update their own posts
