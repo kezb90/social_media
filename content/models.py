@@ -6,7 +6,7 @@ from accounts.models import Profile
 
 
 class Post(MyBaseModel):
-    owner = models.ForeignKey(Profile, on_delete=models.CASCADE)
+    owner = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='posts')
     title = models.CharField(max_length=200)
     caption = models.TextField()
     likes = models.ManyToManyField(Profile, related_name="liked_posts", through="Like")
