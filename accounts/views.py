@@ -28,7 +28,8 @@ class UnfollowActionView(generics.DestroyAPIView):
         try:
             target_profile = Profile.objects.get(username=target_username)
         except Profile.DoesNotExist:
-            raise serializers.ValidationError({"error": "This profile does not exist"})
+            raise serializers.ValidationError(
+                {"error": "This profile does not exist"})
         return target_profile
 
     def destroy(self, request, *args, **kwargs):
@@ -69,6 +70,14 @@ class FollowActionView(generics.CreateAPIView):
                 status=status.HTTP_404_NOT_FOUND,
             )
 
+        if Follow.objects.filter(
+            follower=request.user.profile, following=target_profile
+        ).exists():
+            return Response(
+                {"message": "You are already following this user"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
         if target_profile.is_public:
             follower_profile = request.user.profile
 
@@ -83,19 +92,14 @@ class FollowActionView(generics.CreateAPIView):
                     {"message": f"You are now following {target_profile.username}"},
                     status=status.HTTP_201_CREATED,
                 )
-            else:
-                return Response(
-                    {"message": "You are already following this user"},
-                    status=status.HTTP_400_BAD_REQUEST,
-                )
+
         else:
             return Response(
-                {"error": "You can only follow public profiles"},
+                {"error": "This is a private profile. You should send follow request."},
                 status=status.HTTP_403_FORBIDDEN,
             )
 
 
-# Create your views here.
 class SignUpView(generics.CreateAPIView):
     permission_classes = [IsUnauthenticated]
     queryset = Profile.objects.all()
@@ -148,7 +152,8 @@ class ProfileUpdateView(generics.RetrieveUpdateAPIView):
     def update(self, request, *args, **kwargs):
         partial = kwargs.pop("partial", False)
         instance = self.get_object()
-        serializer = self.get_serializer(instance, data=request.data, partial=partial)
+        serializer = self.get_serializer(
+            instance, data=request.data, partial=partial)
         serializer.is_valid(raise_exception=True)
         self.perform_update(serializer)
         return Response(serializer.data)
@@ -160,7 +165,8 @@ class FollowerFollowingListAPIView(generics.ListAPIView):
 
     def get_queryset(self):
         # Get public profiles
-        public_profiles = Profile.objects.filter(is_public=True, is_active=True)
+        public_profiles = Profile.objects.filter(
+            is_public=True, is_active=True)
 
         # Get profiles followed by the authenticated user
         following_profiles = Profile.objects.filter(
@@ -179,7 +185,8 @@ class FollowerFollowingRetrieveAPIView(generics.RetrieveAPIView):
 
     def get_queryset(self):
         # Get public profiles
-        public_profiles = Profile.objects.filter(is_public=True, is_active=True)
+        public_profiles = Profile.objects.filter(
+            is_public=True, is_active=True)
 
         # Get profiles followed by the authenticated user
         following_profiles = Profile.objects.filter(
@@ -198,7 +205,8 @@ class ProfileRetrieveAPIView(generics.RetrieveAPIView):
 
     def get_queryset(self):
         # Get public profiles
-        public_profiles = Profile.objects.filter(is_public=True, is_active=True)
+        public_profiles = Profile.objects.filter(
+            is_public=True, is_active=True)
 
         # Get profiles followed by the authenticated user
         following_profiles = Profile.objects.filter(
@@ -217,7 +225,8 @@ class ProfileListView(generics.ListAPIView):
 
     def get_queryset(self):
         # Get public profiles
-        public_profiles = Profile.objects.filter(is_public=True, is_active=True)
+        public_profiles = Profile.objects.filter(
+            is_public=True, is_active=True)
 
         # Get profiles followed by the authenticated user
         following_profiles = Profile.objects.filter(
@@ -233,6 +242,7 @@ class ProfileListView(generics.ListAPIView):
 @api_view(["POST"])
 @permission_classes([permissions.IsAuthenticated])
 def send_follow_request(request, target_username):
+
     try:
         target_profile = Profile.objects.get(username=target_username)
     except Profile.DoesNotExist:
@@ -274,7 +284,8 @@ def send_follow_request(request, target_username):
             "from_user": user_profile.pk,
             "to_user": target_profile.pk,
         }
-        follow_request_serializer = FollowRequestSerializer(data=follow_request_data)
+        follow_request_serializer = FollowRequestSerializer(
+            data=follow_request_data)
         if follow_request_serializer.is_valid():
             follow_request_serializer.save()
             return Response(
