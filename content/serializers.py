@@ -1,12 +1,12 @@
 from rest_framework import serializers
-from .models import Post, Like, Tag, Viewer
+from .models import Post, Like, Tag, ViewerPost
 from rest_framework.exceptions import PermissionDenied
 from accounts.serializers import ProfileSerializer
 
 
 class ViewerSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Viewer
+        model = ViewerPost
         fields = ("user", "post")
 
 

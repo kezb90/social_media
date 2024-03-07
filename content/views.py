@@ -2,7 +2,7 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import viewsets
 from rest_framework import generics
-from .models import Post, Like, Tag
+from .models import Post, Like, Tag, ViewerPost
 from .serializers import (
     PostSerializer,
     PostCreateUpdateSerializer,
@@ -83,3 +83,14 @@ class PostViewSet(viewsets.ModelViewSet):
                 status=403,
             )
         return super().destroy(request, *args, **kwargs)
+
+    def get_object(self):
+        # Retrieve the post instance
+        post = super().get_object()
+
+        # Create a ViewerPost instance
+        user_profile = self.request.user.profile
+        if post.owner != self.request.user.profile:
+            ViewerPost.objects.create(user=user_profile, post=post)
+
+        return post
