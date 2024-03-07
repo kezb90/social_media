@@ -62,7 +62,7 @@ class PostViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         # Set the owner of the post to the authenticated user
-        serializer.save(owner=self.request.user.profile, is_active=False)
+        serializer.save(owner=self.request.user.profile, is_active=True)
 
     def update(self, request, *args, **kwargs):
         # Ensure users can only update their own posts

@@ -49,7 +49,7 @@ class CommentDetailView(generics.RetrieveUpdateDestroyAPIView):
 
         instance: Comment = self.get_object()
 
-        instance.is_active = False
+        instance.is_active = True
         serializer = self.get_serializer(instance, data=request.data, partial=True)
         serializer.is_valid(raise_exception=True)
         serializer.save()

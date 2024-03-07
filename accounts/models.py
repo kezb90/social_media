@@ -5,7 +5,7 @@ from django.contrib.auth.models import User
 
 
 class MyBaseModel(models.Model):
-    is_active = models.BooleanField(verbose_name="Is active", default=False)
+    is_active = models.BooleanField(verbose_name="Is active", default=True)
     created_at = models.DateTimeField(verbose_name="date created", auto_now_add=True)
     updated_at = models.DateTimeField(verbose_name="date updated", auto_now=True)
 
