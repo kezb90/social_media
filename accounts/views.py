@@ -15,7 +15,7 @@ from .serializers import (
     UnfollowActionSerializer,
     FollowRequestSerializer,
 )
-from rest_framework.decorators import api_view, permission_classes
+from rest_framework.decorators import api_view, permission_classes, action
 from .permissions import IsUnauthenticated
 from .models import Profile, Follow, FollowRequest, ViewProfile
 
@@ -352,3 +352,23 @@ class FollowRequestViewSet(viewsets.ModelViewSet):
             return Response(
                 serializer.data, status=status.HTTP_201_CREATED, headers=headers
             )
+            
+    @action(detail=True, methods=['POST'])
+    def accept_follow_request(self, request, pk=None):
+        follow_request = self.get_object()
+        # Check if the request user is the receiver of the follow request
+        if follow_request.to_user != request.user.profile:
+            return Response(
+                {"detail": "You can only accept follow requests addressed to you."},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+
+        Follow.objects.create(
+            follower=follow_request.from_user,
+            following=follow_request.to_user,
+        )
+
+        # Delete the FollowRequest instance
+        follow_request.delete()
+
+        return Response({"detail": "Follow request accepted successfully."}, status=status.HTTP_200_OK)
