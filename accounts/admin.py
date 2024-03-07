@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.contrib.admin import register
-from .models import Profile, Follow , FollowRequest
+from .models import Profile, Follow, FollowRequest
 
 # Register your models here.
 
@@ -62,8 +62,8 @@ class FollowAdmin(admin.ModelAdmin):
 
 @admin.register(FollowRequest)
 class FollowRequestAdmin(admin.ModelAdmin):
-    list_display = ("from_user", "to_user", "created_at", "accepted")
-    list_filter = ("accepted", "created_at")
+    list_display = ("from_user", "to_user", "created_at")
+    list_filter = ("from_user", "to_user", "created_at")
     search_fields = ("from_user__username", "to_user__username")
     date_hierarchy = "created_at"
 

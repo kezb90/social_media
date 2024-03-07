@@ -2,6 +2,7 @@ from django.contrib.auth import authenticate
 from rest_framework import status, serializers
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework import viewsets
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework import generics, permissions, status
 from .serializers import (
@@ -28,8 +29,7 @@ class UnfollowActionView(generics.DestroyAPIView):
         try:
             target_profile = Profile.objects.get(username=target_username)
         except Profile.DoesNotExist:
-            raise serializers.ValidationError(
-                {"error": "This profile does not exist"})
+            raise serializers.ValidationError({"error": "This profile does not exist"})
         return target_profile
 
     def destroy(self, request, *args, **kwargs):
@@ -152,8 +152,7 @@ class ProfileUpdateView(generics.RetrieveUpdateAPIView):
     def update(self, request, *args, **kwargs):
         partial = kwargs.pop("partial", False)
         instance = self.get_object()
-        serializer = self.get_serializer(
-            instance, data=request.data, partial=partial)
+        serializer = self.get_serializer(instance, data=request.data, partial=partial)
         serializer.is_valid(raise_exception=True)
         self.perform_update(serializer)
         return Response(serializer.data)
@@ -165,8 +164,7 @@ class FollowerFollowingListAPIView(generics.ListAPIView):
 
     def get_queryset(self):
         # Get public profiles
-        public_profiles = Profile.objects.filter(
-            is_public=True, is_active=True)
+        public_profiles = Profile.objects.filter(is_public=True, is_active=True)
 
         # Get profiles followed by the authenticated user
         following_profiles = Profile.objects.filter(
@@ -185,8 +183,7 @@ class FollowerFollowingRetrieveAPIView(generics.RetrieveAPIView):
 
     def get_queryset(self):
         # Get public profiles
-        public_profiles = Profile.objects.filter(
-            is_public=True, is_active=True)
+        public_profiles = Profile.objects.filter(is_public=True, is_active=True)
 
         # Get profiles followed by the authenticated user
         following_profiles = Profile.objects.filter(
@@ -205,8 +202,7 @@ class ProfileRetrieveAPIView(generics.RetrieveAPIView):
 
     def get_queryset(self):
         # Get public profiles
-        public_profiles = Profile.objects.filter(
-            is_public=True, is_active=True)
+        public_profiles = Profile.objects.filter(is_public=True, is_active=True)
 
         # Get profiles followed by the authenticated user
         following_profiles = Profile.objects.filter(
@@ -225,8 +221,7 @@ class ProfileListView(generics.ListAPIView):
 
     def get_queryset(self):
         # Get public profiles
-        public_profiles = Profile.objects.filter(
-            is_public=True, is_active=True)
+        public_profiles = Profile.objects.filter(is_public=True, is_active=True)
 
         # Get profiles followed by the authenticated user
         following_profiles = Profile.objects.filter(
@@ -270,7 +265,7 @@ def send_follow_request(request, target_username):
     else:
         # Check if a follow request already exists
         if FollowRequest.objects.filter(
-            from_user=user_profile, to_user=target_profile, accepted=False
+            from_user=user_profile, to_user=target_profile
         ).exists():
             return Response(
                 {
@@ -284,8 +279,7 @@ def send_follow_request(request, target_username):
             "from_user": user_profile.pk,
             "to_user": target_profile.pk,
         }
-        follow_request_serializer = FollowRequestSerializer(
-            data=follow_request_data)
+        follow_request_serializer = FollowRequestSerializer(data=follow_request_data)
         if follow_request_serializer.is_valid():
             follow_request_serializer.save()
             return Response(
@@ -296,4 +290,51 @@ def send_follow_request(request, target_username):
             return Response(
                 {"error": "Invalid follow request data."},
                 status=status.HTTP_400_BAD_REQUEST,
+            )
+
+
+class FollowRequestViewSet(viewsets.ModelViewSet):
+    serializer_class = FollowRequestSerializer
+
+    def get_queryset(self):
+        follow_requests = FollowRequest.objects.filter(
+            to_user=self.request.user
+        ) | FollowRequest.objects.filter(from_user=self.request.user)
+        return follow_requests
+
+    def update(self, request, *args, **kwargs):
+        # Custom logic or raise an exception to indicate that updates are not allowed
+        return Response(
+            {"detail": "Updates are not allowed."}, status=status.HTTP_403_FORBIDDEN
+        )
+
+    def create(self, request, *args, **kwargs):
+        # Ensure from_user is set to request.user.profile
+        if request.data["from_user"] != str(request.user.profile.pk):
+            return Response(
+                {"detail": "You cannot follow a user on behalf of another user."},
+                status.HTTP_403_FORBIDDEN,
+            )
+
+        if request.data["to_user"] == str(request.user.profile.pk):
+            return Response(
+                {"detail": "You cannot follow yourself."}, status.HTTP_403_FORBIDDEN
+            )
+
+        # Use the serializer to create the FollowRequest object
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        to_user = serializer.validated_data.get("to_user")
+        from_user: Profile = serializer.validated_data.get("from_user")
+        if to_user in from_user.followings:
+            return Response(
+                {"detail": "You are already following this user."},
+                status.HTTP_403_FORBIDDEN,
+            )
+        else:
+            self.perform_create(serializer)
+
+            headers = self.get_success_headers(serializer.data)
+            return Response(
+                serializer.data, status=status.HTTP_201_CREATED, headers=headers
             )

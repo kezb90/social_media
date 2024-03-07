@@ -109,6 +109,15 @@ class PublicProfileSerializer(serializers.ModelSerializer):
 
 
 class FollowRequestSerializer(serializers.ModelSerializer):
+
     class Meta:
         model = FollowRequest
-        fields = "__all__"
+        fields = ["id", "from_user", "to_user", "created_at"]
+
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        representation["from_user"] = Profile.objects.get(
+            pk=instance.from_user.id
+        ).username
+        representation["to_user"] = Profile.objects.get(pk=instance.to_user.id).username
+        return representation
