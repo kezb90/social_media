@@ -23,8 +23,7 @@ from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
 
 app_name = "root"
-urlpatterns = (
-    [
+urlpatterns = [
         path(settings.ADMIN_URL, admin.site.urls, name="admin"),
         path("", include("landing_page.urls", namespace="home")),
         path("accounts/", include("accounts.urls", namespace="accounts")),
@@ -43,7 +42,6 @@ urlpatterns = (
             SpectacularSwaggerView.as_view(url_name="schema"),
             name="swagger-ui",
         ),
-    ]
-    + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
-    + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
-)
+]
+urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
