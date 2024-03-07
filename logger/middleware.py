@@ -4,8 +4,11 @@ import os
 import time
 from datetime import datetime
 
+
 def get_user_ip(request):
-    return request.META.get('REMOTE_ADDR')
+    return request.META.get("REMOTE_ADDR")
+
+
 # Get the current directory of the Django app
 current_directory = os.path.dirname(os.path.abspath(__file__))
 # Construct the log file path in the current directory
@@ -40,11 +43,11 @@ class LoggingMiddleware:
 
         return response
 
-    
     def log_request(self, request, response, elapsed_time):
         self.logger.info(
             json.dumps(
-                {   "date": datetime.now().isoformat(),
+                {
+                    "date": datetime.now().isoformat(),
                     "path": request.path,
                     "method": request.method,
                     "status_code": response.status_code,
@@ -53,7 +56,7 @@ class LoggingMiddleware:
                         if request.user.is_authenticated
                         else "Anonymous"
                     ),
-                    "user_ip":get_user_ip(request),
+                    "user_ip": get_user_ip(request),
                     "elapsed_time": f"{elapsed_time:.6f} seconds",
                 }
             )

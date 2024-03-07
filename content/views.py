@@ -49,8 +49,10 @@ class PostViewSet(viewsets.ModelViewSet):
         followings_by_owner_profile = user.followings
         represent_posts = owner_posts
         for following in followings_by_owner_profile:
-            represent_posts = represent_posts | Post.objects.filter(owner=following, is_active=True )
-    
+            represent_posts = represent_posts | Post.objects.filter(
+                owner=following, is_active=True
+            )
+
         return represent_posts
 
     def get_serializer_class(self):
