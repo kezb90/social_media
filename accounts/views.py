@@ -17,7 +17,7 @@ from .serializers import (
 )
 from rest_framework.decorators import api_view, permission_classes
 from .permissions import IsUnauthenticated
-from .models import Profile, Follow, FollowRequest
+from .models import Profile, Follow, FollowRequest, ViewProfile
 
 
 class UnfollowActionView(generics.DestroyAPIView):
@@ -213,6 +213,20 @@ class ProfileRetrieveAPIView(generics.RetrieveAPIView):
         profiles = public_profiles | following_profiles
 
         return profiles
+
+    def get_object(self):
+        # Retrieve the profile instance
+        profile = super().get_object()
+
+        # Create a ViewProfile instance
+        viewed_profile = profile
+        viewer_profile = self.request.user.profile
+        if viewed_profile != viewer_profile:
+            view_profile_instance = ViewProfile.objects.create(
+                viewer=viewer_profile, viewed_profile=viewed_profile
+            )
+
+        return profile
 
 
 class ProfileListView(generics.ListAPIView):
