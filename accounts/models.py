@@ -93,3 +93,16 @@ class FollowRequest(models.Model):
 
     def __str__(self):
         return f"{self.from_user.username} wants to follow {self.to_user.username}"
+
+
+class ViewProfile(models.Model):
+    viewer = models.ForeignKey(
+        Profile, on_delete=models.CASCADE, related_name="viewers_of_profile"
+    )
+    viewed_profile = models.ForeignKey(
+        Profile, on_delete=models.CASCADE, related_name="viewed_profile"
+    )
+    timestamp = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.viewer.username} viewed {self.viewed_profile.username} on {self.timestamp}"
