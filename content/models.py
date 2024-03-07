@@ -43,7 +43,13 @@ class Tag(MyBaseModel):
 
 
 class Viewer(MyBaseModel):
-    user = models.ForeignKey(Profile, on_delete=models.CASCADE, null=False, blank=False)
+    user = models.ForeignKey(
+        Profile,
+        on_delete=models.CASCADE,
+        related_name="viewers_of_post",
+        null=False,
+        blank=False,
+    )
     post = models.ForeignKey(Post, on_delete=models.CASCADE, null=False, blank=False)
     count = models.PositiveIntegerField(default=1)
 
@@ -108,6 +114,7 @@ class StoryViewer(MyBaseModel):
     user = models.ForeignKey(Profile, on_delete=models.CASCADE, null=False, blank=False)
     story = models.ForeignKey(Story, on_delete=models.CASCADE, null=False, blank=False)
     count = models.PositiveIntegerField(default=1)
+    timestamp = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         unique_together = ("user", "story")
