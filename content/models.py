@@ -42,7 +42,7 @@ class Tag(MyBaseModel):
         return f"{self.user.username} taged {self.post.title}"
 
 
-class Viewer(MyBaseModel):
+class ViewerPost(models.Model):
     user = models.ForeignKey(
         Profile,
         on_delete=models.CASCADE,
@@ -50,11 +50,14 @@ class Viewer(MyBaseModel):
         null=False,
         blank=False,
     )
-    post = models.ForeignKey(Post, on_delete=models.CASCADE, null=False, blank=False)
-    count = models.PositiveIntegerField(default=1)
-
-    class Meta:
-        unique_together = ("user", "post")
+    post = models.ForeignKey(
+        Post,
+        related_name="posts_viewed",
+        on_delete=models.CASCADE,
+        null=False,
+        blank=False,
+    )
+    timestamp = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return f"{self.user.username} viewed {self.post.title}"
