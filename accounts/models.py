@@ -37,12 +37,10 @@ class Profile(User):
     """
 
     def follow_request_senders(self):
-        return Profile.objects.filter(
-            follow_requests_sent__to_user=self, follow_requests_sent__accepted=False
-        ).distinct()
+        return Profile.objects.filter(follow_requests_sent__to_user=self).distinct()
 
     def has_follow_requests(self):
-        return FollowRequest.objects.filter(to_user=self, accepted=False).exists()
+        return FollowRequest.objects.filter(to_user=self).exists()
 
     """
     The followers method uses the reverse relation followings
@@ -88,7 +86,6 @@ class FollowRequest(models.Model):
     to_user = models.ForeignKey(
         Profile, related_name="follow_requests_received", on_delete=models.CASCADE
     )
-    accepted = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
