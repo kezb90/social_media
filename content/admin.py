@@ -66,10 +66,11 @@ class ViewerPostAdmin(admin.ModelAdmin):
 
 
 class PostMediaAdmin(admin.ModelAdmin):
-    list_display = ["post", "media", "order"]
+    list_display = ["id", "post", "media", "order"]
 
 
 admin.site.register(Post, PostAdmin)
+admin.site.register(PostMedia, PostMediaAdmin)
 admin.site.register(Like, LikeAdmin)
 admin.site.register(Tag, TagAdmin)
 admin.site.register(ViewerPost, ViewerPostAdmin)
