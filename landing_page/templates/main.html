@@ -37,7 +37,10 @@ landing page
     </div>
     <ul class="list-group">
         {% if request.user.is_authenticated %}
-        <li class="list-group-item list-group-item-primary"><a class="nav-link" href="{% url 'content:post-list' %}">post-list</a></li>
+        <li class="list-group-item list-group-item-primary"><a class="nav-link" href="{% url 'content:posts-list' %}">posts_list</a></li>
+        <li class="list-group-item list-group-item-primary"><a class="nav-link" href="{% url 'content:posts-detail' 1 %}">posts_detail</a></li>
+        <li class="list-group-item list-group-item-primary"><a class="nav-link" href="{% url 'content:postmedia-list' %}">postmedia_list</a></li>
+        <li class="list-group-item list-group-item-primary"><a class="nav-link" href="{% url 'content:postmedia-detail' 1 %}">postmedia_detail</a></li>
         <li class="list-group-item list-group-item-secondary"><a class="nav-link" href="{% url 'content:add-like' %}">add-like</a></li>
         <li class="list-group-item list-group-item-secondary"><a class="nav-link" href="{% url 'content:remove-like' 1 %}">remove-like</a></li>
         <li class="list-group-item list-group-item-success"><a class="nav-link" href="{% url 'content:add-tag' %}">add-tag</a></li>
