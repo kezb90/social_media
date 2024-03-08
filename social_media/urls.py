@@ -24,24 +24,22 @@ from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
 
 app_name = "root"
 urlpatterns = [
-        path(settings.ADMIN_URL, admin.site.urls, name="admin"),
-        path("", include("landing_page.urls", namespace="home")),
-        path("accounts/", include("accounts.urls", namespace="accounts")),
-        path("content/", include("content.urls", namespace="content")),
-        path("direct/", include("direct.urls", namespace="direct")),
-        path(
-            "user_activity/", include("user_activity.urls", namespace="user-activity")
-        ),
-        path("api/token/", TokenObtainPairView.as_view(), name="token_obtain_pair"),
-        path("api/token/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
-        path("api-auth/", include("rest_framework.urls")),
-        path("api/schema/", SpectacularAPIView.as_view(), name="schema"),
-        # Optional UI:
-        path(
-            "api/schema/swagger-ui/",
-            SpectacularSwaggerView.as_view(url_name="schema"),
-            name="swagger-ui",
-        ),
+    path(settings.ADMIN_URL, admin.site.urls, name="admin"),
+    path("", include("landing_page.urls", namespace="home")),
+    path("accounts/", include("accounts.urls", namespace="accounts")),
+    path("content/", include("content.urls", namespace="content")),
+    path("direct/", include("direct.urls", namespace="direct")),
+    path("user_activity/", include("user_activity.urls", namespace="user-activity")),
+    path("api/token/", TokenObtainPairView.as_view(), name="token_obtain_pair"),
+    path("api/token/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
+    path("api-auth/", include("rest_framework.urls")),
+    path("api/schema/", SpectacularAPIView.as_view(), name="schema"),
+    # Optional UI:
+    path(
+        "api/schema/swagger-ui/",
+        SpectacularSwaggerView.as_view(url_name="schema"),
+        name="swagger-ui",
+    ),
 ]
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
