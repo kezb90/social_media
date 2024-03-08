@@ -32,6 +32,9 @@ class PostMedia(models.Model):
     )  # Files
     order = models.PositiveIntegerField(default=0)  # slides order
 
+    def __str__(self):
+        return "Media of post" + self.post.__str__() + f"with order number {self.order}"
+
 
 class Like(MyBaseModel):
     user = models.ForeignKey(

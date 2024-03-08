@@ -80,7 +80,6 @@ class PostViewSet(viewsets.ModelViewSet):
 
 
 class PostMediaViewSet(viewsets.ModelViewSet):
-    queryset = PostMedia.objects.all()
     serializer_class = MediaSerializer
     filter_backends = (
         DjangoFilterBackend,
@@ -89,60 +88,36 @@ class PostMediaViewSet(viewsets.ModelViewSet):
     )
     filterset_class = MediaFilter
 
-    def create(self, request, *args, **kwargs):
-        post_id = request.data.get("post")
-        post = get_object_or_404(Post, pk=post_id)
+    def get_queryset(self):
+        return PostMedia.objects.filter(post__owner=self.request.user.profile)
 
+    def get_object(self):
+        obj = get_object_or_404(self.get_queryset(), pk=self.kwargs["pk"])
+        return obj
+
+    def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
+        post = serializer.validated_data.get("post")
+        if post.owner != self.request.user.profile:
+            return Response(
+                {
+                    "detail": "You Can not manipulate the media of post you are not the owner."
+                },
+                status.HTTP_403_FORBIDDEN,
+            )
+        target_order = serializer.validated_data.get("order")
+        is_in_order = post.post_media.filter(order=target_order).exists()
+        if is_in_order:
+            return Response(
+                {
+                    "detail": f"The order number {target_order} is in the orders of Media for the Post {post.id} ."
+                },
+                status.HTTP_403_FORBIDDEN,
+            )
         serializer.save(post=post)
 
         headers = self.get_success_headers(serializer.data)
         return Response(
             serializer.data, status=status.HTTP_201_CREATED, headers=headers
         )
-
-
-# region 1
-
-# class PostViewSet(viewsets.ModelViewSet):
-# queryset = Post.objects.all()
-# serializer_class = PostSerializer
-# permission_classes = [IsAuthenticated]
-
-
-# def perform_create(self, serializer):
-#     # Set the owner of the post to the authenticated user
-#     serializer.save(owner=self.request.user.profile, is_active=True)
-
-# def update(self, request, *args, **kwargs):
-#     # Ensure users can only update their own posts
-#     instance = self.get_object()
-#     if instance.owner != self.request.user.profile:
-#         return Response(
-#             {"detail": "You do not have permission to perform this action."},
-#             status=403,
-#         )
-#     return super().update(request, *args, **kwargs)
-
-# def destroy(self, request, *args, **kwargs):
-#     # Ensure users can only delete their own posts
-#     instance = self.get_object()
-#     if instance.owner != self.request.user.profile:
-#         return Response(
-#             {"detail": "You do not have permission to perform this action."},
-#             status=403,
-#         )
-#     return super().destroy(request, *args, **kwargs)
-
-# def get_object(self):
-#     # Retrieve the post instance
-#     post = super().get_object()
-
-#     # Create a ViewerPost instance
-#     user_profile = self.request.user.profile
-#     if post.owner != self.request.user.profile:
-#         ViewerPost.objects.create(user=user_profile, post=post)
-
-#     return post
-# end region
