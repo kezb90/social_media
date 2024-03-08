@@ -4,12 +4,16 @@ from rest_framework.exceptions import PermissionDenied
 from accounts.serializers import ProfileSerializer
 
 
-class PostMediaSerializer(serializers.ModelSerializer):
-    post_id = serializers.IntegerField()
-
+class MediaSerializer(serializers.ModelSerializer):
     class Meta:
         model = PostMedia
-        fields = ["id", "post_id", "media", "order"]
+        fields = ["id", "post", "media", "order"]
+
+
+class PostMediaSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PostMedia
+        fields = ["id", "media", "order"]
 
 
 class PostSerializer(serializers.ModelSerializer):

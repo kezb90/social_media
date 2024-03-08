@@ -1,7 +1,9 @@
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
-from rest_framework import viewsets
+from rest_framework import viewsets, filters
+from django_filters.rest_framework import DjangoFilterBackend
+from .filters import MediaFilter
 from rest_framework import generics
 from .models import Post, Like, Tag, ViewerPost, PostMedia
 from accounts.models import Profile
@@ -9,7 +11,7 @@ from .serializers import (
     PostSerializer,
     LikeSerializer,
     TagSerializer,
-    PostMediaSerializer,
+    MediaSerializer,
 )
 from rest_framework.decorators import action
 from django.shortcuts import get_object_or_404
@@ -79,11 +81,17 @@ class PostViewSet(viewsets.ModelViewSet):
 
 class PostMediaViewSet(viewsets.ModelViewSet):
     queryset = PostMedia.objects.all()
-    serializer_class = PostMediaSerializer
+    serializer_class = MediaSerializer
+    filter_backends = (
+        DjangoFilterBackend,
+        filters.OrderingFilter,
+        filters.SearchFilter,
+    )
+    filterset_class = MediaFilter
 
     def create(self, request, *args, **kwargs):
         post_id = request.data.get("post")
-        get_object_or_404(Post, pk=post_id)
+        post = get_object_or_404(Post, pk=post_id)
 
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
