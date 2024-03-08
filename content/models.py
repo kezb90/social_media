@@ -17,10 +17,18 @@ class Post(MyBaseModel):
 
 class PostMedia(models.Model):
     post = models.ForeignKey(
-        Post, related_name="post_media", on_delete=models.CASCADE, verbose_name="post"
+        Post,
+        related_name="post_media",
+        on_delete=models.CASCADE,
+        verbose_name="post",
+        null=True,
+        blank=True,
     )  # Post
     media = models.FileField(
-        upload_to="media/content/post/", verbose_name="media of post"
+        upload_to="media/content/post/",
+        verbose_name="media of post",
+        null=True,
+        blank=True,
     )  # Files
     order = models.PositiveIntegerField(default=0)  # slides order
 
