@@ -352,8 +352,8 @@ class FollowRequestViewSet(viewsets.ModelViewSet):
             return Response(
                 serializer.data, status=status.HTTP_201_CREATED, headers=headers
             )
-            
-    @action(detail=True, methods=['POST'])
+
+    @action(detail=True, methods=["POST"])
     def accept_follow_request(self, request, pk=None):
         follow_request = self.get_object()
         # Check if the request user is the receiver of the follow request
@@ -371,4 +371,7 @@ class FollowRequestViewSet(viewsets.ModelViewSet):
         # Delete the FollowRequest instance
         follow_request.delete()
 
-        return Response({"detail": "Follow request accepted successfully."}, status=status.HTTP_200_OK)
+        return Response(
+            {"detail": "Follow request accepted successfully."},
+            status=status.HTTP_200_OK,
+        )
