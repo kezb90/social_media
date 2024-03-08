@@ -35,6 +35,7 @@ INSTALLED_APPS = [
     # TRUSTAPPS
     "rest_framework",
     "corsheaders",
+    "django_filters",
     "rest_framework_simplejwt",
     # MYAPPS
     "accounts.apps.AccountsConfig",
